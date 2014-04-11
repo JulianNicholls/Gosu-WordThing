@@ -1,0 +1,27 @@
+# Word Thing
+
+I'm not sure where I'm headed with this. It may end up being just a library.
+
+## What there is so far
+
+So far I have
+
+### Large word list
+
+wtwords.txt is constructed from Kevin Atkinson's [wordlist page](http://wordlist.sourceforge.net/). 
+I have included the whole copyright file that comes with the download, since
+all the component word lists have ultimately been placed in the public domain, 
+but there are a number of different statements of copyright contained. Clearly,
+I am deeply in Kevin's debt for the word list and acknowledge the sterling work
+that he has done.
+
+The word list that I have chosen to construct from his files is:
+
+- Level 80, with...
+- English and British up to variant 1.
+- No possessives ('s), abbreviations, proper names, Roman numerals, or hacker words. 
+- Word lengths 3 to 14.
+
+### Playing Grid
+
+There is a 12x12 playing grid that allows selecting of letters using the mouse.
