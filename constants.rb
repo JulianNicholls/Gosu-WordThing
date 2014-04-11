@@ -20,9 +20,14 @@ module WordThing
     RED           = Gosu::Color.new( 0xff, 0xd0, 0x00, 0x00 )
 
     GRID_BG       = Gosu::Color.new( 0xff, 0x20, 0x20, 0x20 )
-    
+
     MOVES_COLOUR  = Gosu::Color.new( 0xff, 0xff, 0xff, 0xff )
 
     COLOR_TABLE   = [CYAN, ORANGE, BLUE, PURPLE, YELLOW, GREEN]
+
+    SCORES        = {
+                      b: 3, c: 3, d: 2, f: 4, g: 2, h: 4, j: 8, k: 5,
+                      m: 3, p: 3, q: 10, v: 4, w: 4, x: 8, y: 4, z: 10
+                    }
   end
 end
