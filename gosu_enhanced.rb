@@ -4,13 +4,22 @@ require 'gosu'
 
 # Hold a (x, y) pixel position, and allow for offsetting and movement
 class Point < Struct.new( :x, :y )
-  def offset( by_x, by_y )
-    Point.new( x + by_x, y + by_y )
+  def offset( by_x, by_y = nil )
+    if by_x.respond_to? :x
+      Point.new( x + by_x.x, y + by_x.y )
+    else
+      Point.new( x + by_x, y + by_y )
+    end
   end
 
-  def move_by!( by_x, by_y)
-    self.x += by_x
-    self.y += by_y
+  def move_by!( by_x, by_y = nil )
+    if by_x.respond_to? :x
+      self.x += by_x.x
+      self.y += by_x.y
+    else
+      self.x += by_x
+      self.y += by_y
+    end
   end
 
   def move_to!( new_x, new_y = nil )
@@ -60,10 +69,17 @@ module Gosu
     end
   end
 
-  # Add a measure to return both width and height for a text
+  # Add a measure to return both width and height for a text and a way
+  # to centre a text in a rectangle
+  
   class Font
     def measure( text )
       Size.new( text_width( text, 1 ), height )
+    end
+    
+    def centred_in( text, width, height )
+      size = measure( text )
+      Point.new( (width - size.width) / 2, (height - size.height) / 2 )
     end
   end
 end
