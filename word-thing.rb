@@ -4,9 +4,10 @@ require './gosu_enhanced'
 require './constants'
 require './resources'
 require './grid'
+require './wordlist'
 
 module WordThing
-  # Colour Flooding Game
+  # Word game thing
   class Game < Gosu::Window
     include Constants
 
@@ -31,6 +32,8 @@ module WordThing
 
       self.caption = caption
 
+      @list = WordList.new
+      @list.debug
       reset
     end
 
@@ -61,7 +64,7 @@ module WordThing
 
       @elapsed = (Time.now - @start).round unless @game_over
       
-      if @position
+      unless @position.nil?
         @grid.toggle_select @position
         @position = nil
       end
@@ -74,6 +77,8 @@ module WordThing
       draw_background
 
       @grid.draw
+      
+      draw_loading if @phase == :loading
     end
 
     def draw_background
@@ -86,7 +91,7 @@ module WordThing
     def draw_overlays
       GameOverWindow.new( self ).draw && return if @game_over
     end
-
+    
     def button_down( btn_id )
       instance_exec( &KEY_FUNCS[btn_id] )
     end
