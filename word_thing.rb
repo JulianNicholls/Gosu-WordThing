@@ -15,10 +15,11 @@ module WordThing
     attr_reader :fonts, :images
 
     KEY_FUNCS = {
-      Gosu::KbEscape =>  -> { close },
-      Gosu::KbR      =>  -> { reset },
+      Gosu::KbEscape  =>  -> { close },
+      Gosu::KbR       =>  -> { reset },
+      Gosu::KbReturn  =>  -> { @words << @grid.word ; @grid.reset_word },
 
-      Gosu::MsLeft   =>  -> { @position = Point.new( mouse_x, mouse_y ) }
+      Gosu::MsLeft    =>  -> { @position = Point.new( mouse_x, mouse_y ) }
     }
 
     def initialize( debug, easy )
@@ -34,7 +35,6 @@ module WordThing
       self.caption = caption
 
       @list = WordList.new
-      @list.debug
       reset
     end
 
@@ -58,6 +58,7 @@ module WordThing
       @start      = Time.now
       @elapsed    = 0
       @score      = 0
+      @words      = []
     end
 
     def update
@@ -78,19 +79,28 @@ module WordThing
       draw_background
 
       @grid.draw
+      draw_words
     end
 
     def draw_background
       @images[:background].draw( 0, 0, 0 )
     end
 
-    def draw_overlays
-      GameOverWindow.new( self ).draw && return if @game_over
+    def draw_words
+      font  = fonts[:word]
+      pos   = WORDLIST_POS.offset( 5, 5 )
+      @words.each do |word|
+        font.draw( word, pos.x, pos.y, 1, 1, 1, BLUE )
+        pos.move_by!( 0, (4 * font.height) / 3 )
+      end
+      
+      word = @grid.word
+      font.draw( word, pos.x, pos.y, 1, 1, 1, CYAN ) if word.size > 0
     end
 
     def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.has_key? btn_id
-    end
+      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
+    end    
   end
 end
 
