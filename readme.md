@@ -2,7 +2,7 @@
 
 I'm not sure where I'm headed with this. It may end up being just a library.
 
-## What there is so far
+## What there is
 
 So far I have
 
@@ -24,4 +24,9 @@ The word list that I have chosen to construct from his files is:
 
 ### Playing Grid
 
-There is a 12x12 playing grid that allows selecting of letters using the mouse.
+There is now a 10x10 playing grid that allows selecting of letters using the mouse.
+
+## gosu_enhanced gem
+
+It now uses the gosu_enhanced gem that I created from the source file that
+I've been using in various forms  for a while.
