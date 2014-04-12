@@ -24,12 +24,12 @@ module WordThing
 
       @fonts  = ResourceLoader.fonts( self )
       @images = ResourceLoader.fonts( self )
-      
+
       self.caption = caption
     end
 
     def caption
-      caption = 'Word Thing Fonts'
+      'Word Thing Fonts'
     end
 
     def update
@@ -49,21 +49,21 @@ module WordThing
 
     def draw_fonts
       top = 10
-      
+
       @fonts.each do |name, font|
         name = name.to_s.upcase
         text = name + ' XXX x XX'
         size = font.measure( text )
         avg  = (size.width / text.size)
-        text = format( "%-10s %3d x %2d (%.1f)", name, size.width, size.height, avg )
+        text = format( '%-10s %3d x %2d (%.1f)', name, size.width, size.height, avg )
         font.draw( text, 20, top, 1, 1, 1, Gosu::Color::WHITE )
-        
+
         top += ((4 * size.height) / 3).floor
       end
     end
-    
+
     def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.has_key? btn_id
+      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
     end
   end
 end
