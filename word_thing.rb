@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
-require './gosu_enhanced'
+require 'gosu_enhanced'
+
 require './constants'
 require './resources'
 require './grid'
@@ -63,7 +64,7 @@ module WordThing
       update_game_over
 
       @elapsed = (Time.now - @start).round unless @game_over
-      
+
       unless @position.nil?
         @grid.toggle_select @position
         @position = nil
@@ -77,7 +78,7 @@ module WordThing
       draw_background
 
       @grid.draw
-      
+
       draw_loading if @phase == :loading
     end
 
@@ -91,13 +92,10 @@ module WordThing
     def draw_overlays
       GameOverWindow.new( self ).draw && return if @game_over
     end
-    
+
     def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] )
+      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.has_key? btn_id
     end
-
-    private
-
   end
 end
 

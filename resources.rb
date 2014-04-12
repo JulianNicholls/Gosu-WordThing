@@ -1,10 +1,10 @@
-# Resource Loader
+require 'gosu'
 
 module WordThing
   # Resource Loader
   class ResourceLoader
     def self.fonts( window )
-      { 
+      {
         button: Gosu::Font.new( window, 'Arial', 14 ),
         moves:  Gosu::Font.new( window, 'Arial', 24 ),
         header: Gosu::Font.new( window, 'Arial', 56 ),
