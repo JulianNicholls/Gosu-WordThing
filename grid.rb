@@ -7,26 +7,23 @@ module WordThing
 
     attr_reader :word
 
-    # These weightings are based on an analysis of wtwords.txt
-
-    CONS    = 'BBBCCCCCCCDDDDDFFGGGGHHHHJKKLLLLLLLLMMMMMNNNNNNNNNNN' \
-              'PPPPPQRRRRRRRRRRRSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTVVWXYYYZ'
-    VOWELS  = 'AAAAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIIIIIOOOOOOOOOUUUU'
-
     def initialize( surface, columns = COLUMNS, rows = ROWS )
       @window         = surface
       @columns, @rows = columns, rows
 
-      @grid           = build_grid
-      reset_word
+      @grid           = Builder.new_grid( columns, rows )
+      post_process
+      
+      @word       = ''
+      @word_path  = []
     end
 
     def draw
-      @grid.each_with_index do |column, col|
-        column.each_with_index { |cell, row| render( Grid::Point.new( col, row ), cell ) }
+      @grid.each_with_index do |col, c|
+        col.each_with_index { |cell, r| render( Grid::Point.new( c, r ), cell ) }
       end
-      
-      @word_path.each_with_index do |pos, idx| 
+
+      @word_path.each_with_index do |pos, idx|
         add_word_index( pos, idx + 1 )
       end
     end
@@ -34,10 +31,11 @@ module WordThing
     def toggle_select( position )
       process_selection( Grid::Point.from_point( position ) )
     end
-    
+
     def reset_word
-      @word       = ''
-      @word_path  = []
+      @word = ''
+      
+      cell_at( @word_path.pop )[:selected] = false while @word_path.size > 0
     end
 
     private
@@ -46,10 +44,10 @@ module WordThing
     # If there is a word in progress
     #   selection must be of a neighbour of the last letter.
     # deselection must always be of the last letter
-    
+
     def process_selection( gpoint )
       cell = cell_at( gpoint )
-      
+
       if cell[:selected]
         if @word_path[-1] == gpoint
           cell[:selected] = false
@@ -61,22 +59,6 @@ module WordThing
         @word << cell[:letter]
         @word_path << gpoint
       end
-      
-      puts "Word: #{@word}, Path: #{@word_path}"
-    end
-    
-    def build_grid
-      @grid = Array.new( @columns ) do
-        Array.new( @rows ) { { letter: random_letter, selected: false } }
-      end
-
-      post_process
-    end
-
-    # 62% consonant, 38% vowel with the weightings above
-
-    def random_letter
-      rand( 100 ) < 62 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
     end
 
     def post_process
@@ -104,18 +86,18 @@ module WordThing
           n = neighbours( Grid::Point.new( col, row ) )
 
           if n.select { |gp| cell_at( gp )[:letter] == cell[:letter] }.size > 1
-            cell[:letter] = random_letter
+            cell[:letter] = Builder.random_letter
           end
         end
       end
     end
 
-    def neighbours( gpoint )
+    def neighbours( gpos )
       neighs = []
       (-1..1).each do |xd|
         (-1..1).each do |yd|
           next if xd == 0 && yd == 0
-          neighs << gpoint.offset( xd, yd ) if in_grid( gpoint.col + xd, gpoint.row + yd )
+          neighs << gpos.offset( xd, yd ) if in_grid( gpos.col + xd, gpos.row + yd )
         end
       end
 
@@ -128,14 +110,14 @@ module WordThing
 
     def render( gpoint, cell )
       font      = @window.fonts[:letter]
-      ltr_ctr   = font.centred_in( cell[:letter], Size.new( BLOCK_SIZE, BLOCK_SIZE ) )
+      ltr_ctr   = font.centred_in( cell[:letter], Size.new( TILE_SIZE, TILE_SIZE ) )
       point     = gpoint.to_point
       ltr_point = point.offset( ltr_ctr )
 
       background_image( cell ).draw( point.x, point.y, 1 )
       font.draw( cell[:letter], ltr_point.x, ltr_point.y, 2, 1, 1, BLUE )
     end
-    
+
     def add_word_index( gpoint, widx )
       ltr_pos = gpoint.to_point.offset( 5, 3 )
       @window.fonts[:small].draw( widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE )
@@ -144,28 +126,49 @@ module WordThing
     def background_image( cell )
       cell[:selected] ? @window.images[:selected] : @window.images[:letter]
     end
-    
+
     def cell_at( gpoint )
-      cell = @grid[gpoint.col][gpoint.row]
+      @grid[gpoint.col][gpoint.row]
     end
-    
+
     # Grid Point
     class Point < Struct.new( :col, :row )
       include Constants
-      
+
       def offset( x, y )
         Point.new( col + x, row + y )
       end
-      
+
       def to_point
-        GRID_ORIGIN.offset( col * BLOCK_SIZE, row * BLOCK_SIZE )
+        GRID_ORIGIN.offset( col * TILE_SIZE, row * TILE_SIZE )
       end
-      
+
       def self.from_point( pos )
-        Point.new( 
-          ((pos.x - GRID_ORIGIN.x) / BLOCK_SIZE).floor,
-          ((pos.y - GRID_ORIGIN.y) / BLOCK_SIZE).floor
+        Point.new(
+          ((pos.x - GRID_ORIGIN.x) / TILE_SIZE).floor,
+          ((pos.y - GRID_ORIGIN.y) / TILE_SIZE).floor
         )
+      end
+    end
+    
+    # Grid Builder
+    class Builder
+      # These weightings are based on an analysis of wtwords.txt
+
+      CONS    = 'BBBCCCCCCCDDDDDFFGGGGHHHHJKKLLLLLLLLMMMMMNNNNNNNNNNN' \
+                'PPPPPQRRRRRRRRRRRSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTVVWXYYYZ'
+      VOWELS  = 'AAAAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIIIIIOOOOOOOOOUUUU'
+
+      def self.new_grid( columns, rows )
+        @grid = Array.new( columns ) do
+          Array.new( rows ) { { letter: self.random_letter, selected: false } }
+        end
+      end
+
+      # 62% consonant, 38% vowel with the weightings above
+
+      def self.random_letter
+        rand( 100 ) < 62 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
       end
     end
   end
