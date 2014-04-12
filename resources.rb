@@ -10,7 +10,7 @@ module WordThing
         header: Gosu::Font.new( window, 'Arial', 56 ),
         info:   Gosu::Font.new( window, 'Arial', 30 ),
         letter: Gosu::Font.new( window, 'Arial', 30 ),
-        small:  Gosu::Font.new( window, 'Arial', 10 ) 
+        small:  Gosu::Font.new( window, 'Arial', 11 ) 
       }
     end
 
