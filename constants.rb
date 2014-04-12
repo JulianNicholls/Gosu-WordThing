@@ -4,14 +4,16 @@ module WordThing
     include GosuEnhanced
     
     GAME_BORDER   = 5
-    COLUMNS       = 12
-    ROWS          = 12
+    COLUMNS       = 10
+    ROWS          = 10
     BLOCK_SIZE    = 60
+    HEADER_HEIGHT = 40
+    WORDS_WIDTH   = 180
 
-    GRID_ORIGIN   = Point.new( GAME_BORDER, GAME_BORDER )
+    GRID_ORIGIN   = Point.new( GAME_BORDER, GAME_BORDER * 2 + HEADER_HEIGHT )
 
-    WIDTH         = GAME_BORDER * 2 + COLUMNS * BLOCK_SIZE
-    HEIGHT        = GAME_BORDER * 2 + ROWS * BLOCK_SIZE
+    WIDTH         = GAME_BORDER * 3 + COLUMNS * BLOCK_SIZE + WORDS_WIDTH
+    HEIGHT        = GAME_BORDER * 3 + ROWS * BLOCK_SIZE + HEADER_HEIGHT
 
     CYAN          = Gosu::Color.new( 0xff, 0x00, 0xe0, 0xe0 )
     BLUE          = Gosu::Color.new( 0xff, 0x00, 0x00, 0xd0 )

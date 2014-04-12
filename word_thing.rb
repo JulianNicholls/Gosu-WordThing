@@ -78,15 +78,10 @@ module WordThing
       draw_background
 
       @grid.draw
-
-      draw_loading if @phase == :loading
     end
 
     def draw_background
-      tl    = Point.new( 0, 0 )
-      size  = Size.new( WIDTH, HEIGHT )
-      draw_rectangle( tl, size, 0, Gosu::Color::WHITE )
-      draw_rectangle( tl.offset( 5, 5 ), size.deflate( 10, 10 ), 0, GRID_BG )
+      @images[:background].draw( 0, 0, 0 )
     end
 
     def draw_overlays
