@@ -5,7 +5,7 @@ module WordThing
   class Grid
     include Constants
 
-    attr_accessor :word
+    attr_reader :word
 
     # These weightings are based on an analysis of wtwords.txt
 
@@ -18,7 +18,7 @@ module WordThing
       @columns, @rows = columns, rows
 
       @grid           = build_grid
-      @word           = ''
+      reset_word
     end
 
     def draw
@@ -31,20 +31,37 @@ module WordThing
       column  = (position.x - GRID_ORIGIN.x) / BLOCK_SIZE
       row     = (position.y - GRID_ORIGIN.y) / BLOCK_SIZE
 
-      process_selection( column, row )
+      process_selection( column.floor, row.floor )
+    end
+    
+    def reset_word
+      @word       = ''
+      @word_path  = []
     end
 
     private
 
+    # process the selection / deselection
+    # If there is a word in progress
+    #   selection must be of a neighbour of the last letter.
+    # deselection must always be of the last letter
+    
     def process_selection( col, row )
       cell = @grid[col][row]
+      
       if cell[:selected]
-        cell[:selected] = false
-        @word.pop if @word.size > 0 && @word[-1] == cell[:letter]
-      else
+        if @word_path[-1] == [col, row]
+          cell[:selected] = false
+          @word = @word[0..-2]
+          @word_path.pop
+        end
+      elsif word.size == 0 || neighbours( col, row ).include?( @word_path[-1] )
         cell[:selected] = true
         @word << cell[:letter]
+        @word_path << [col, row]
       end
+      
+      puts "Word: #{@word}, Path: #{@word_path}"
     end
     
     def build_grid

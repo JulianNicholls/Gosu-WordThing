@@ -9,7 +9,8 @@ module WordThing
         moves:  Gosu::Font.new( window, 'Arial', 24 ),
         header: Gosu::Font.new( window, 'Arial', 56 ),
         info:   Gosu::Font.new( window, 'Arial', 30 ),
-        letter: Gosu::Font.new( window, 'Arial', 30 )
+        letter: Gosu::Font.new( window, 'Arial', 30 ),
+        small:  Gosu::Font.new( window, 'Arial', 10 ) 
       }
     end
 
