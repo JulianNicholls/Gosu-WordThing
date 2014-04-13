@@ -16,6 +16,10 @@ class WordList
     end
   end
 
+  def include?( word )
+    @words[word[0]].include? word
+  end
+  
   # Show the number of words in each letter section of the hash.
 
   def debug
