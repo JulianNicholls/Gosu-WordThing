@@ -13,7 +13,7 @@ module WordThing
 
       @grid           = Builder.new_grid( columns, rows )
       post_process
-      
+
       @word       = ''
       @word_path  = []
     end
@@ -34,7 +34,7 @@ module WordThing
 
     def reset_word
       @word = ''
-      
+
       cell_at( @word_path.pop )[:selected] = false while @word_path.size > 0
     end
 
@@ -150,7 +150,7 @@ module WordThing
         )
       end
     end
-    
+
     # Grid Builder
     class Builder
       # These weightings are based on an analysis of wtwords.txt
@@ -161,7 +161,7 @@ module WordThing
 
       def self.new_grid( columns, rows )
         @grid = Array.new( columns ) do
-          Array.new( rows ) { { letter: self.random_letter, selected: false } }
+          Array.new( rows ) { { letter: random_letter, selected: false } }
         end
       end
 
