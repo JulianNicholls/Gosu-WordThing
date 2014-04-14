@@ -4,7 +4,7 @@ require 'gosu_enhanced'
 
 require './constants'
 require './resources'
-require './grid'
+require './wordgrid'
 require './wordlist'
 
 module WordThing
@@ -12,7 +12,7 @@ module WordThing
   class Game < Gosu::Window
     include Constants
 
-    attr_reader :fonts, :images
+    attr_reader :fonts, :images, :list
 
     KEY_FUNCS = {
       Gosu::KbEscape  =>  -> { close },
@@ -51,7 +51,7 @@ module WordThing
     end
 
     def reset
-      @grid       = Grid.new( self )
+      @grid       = WordGrid.new( self )
       @game_over  = false
       @position   = nil
       @moves      = 0

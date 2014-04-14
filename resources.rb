@@ -23,7 +23,7 @@ module WordThing
     def self.sounds( window )
       {
         ok:   Gosu::Sample.new( window, 'media/ok.wav' ),
-        uhuh: Gosu::Sample.new( window, 'media/uhuh.wav' ),
+        uhuh: Gosu::Sample.new( window, 'media/uhuh.wav' )
       }
     end
   end

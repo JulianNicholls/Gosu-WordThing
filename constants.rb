@@ -12,7 +12,7 @@ module WordThing
                                  GAME_BORDER * 2 + HEADER_HEIGHT )
 
     WORDLIST_SIZE   = Size.new( 180, ROWS * TILE_SIZE )
-    
+
     GRID_ORIGIN   = Point.new( GAME_BORDER, GAME_BORDER * 2 + HEADER_HEIGHT )
 
     WIDTH         = GAME_BORDER * 3 + COLUMNS * TILE_SIZE + WORDLIST_SIZE.width

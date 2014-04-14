@@ -36,6 +36,14 @@ class WordsStatistics
     type_counts( consonants.sort )
   end
 
+  def initials
+    counts = Hash.new( 0 )
+
+    @words.each { |w| counts[w[0]] += 1 }
+
+    type_counts( counts.keys.sort )
+  end
+
   private
 
   def count_letters
@@ -55,7 +63,7 @@ class WordsStatistics
 
     keys.each do |k|
       count = @counts[k]
-      printf( "%s: %6d - %6.2f%%\n", k, count, ((count * 100.0) / total).round( 2 ) )
+      printf( "%s: %5d - %6.2f%%\n", k, count, ((count * 100.0) / total).round( 2 ) )
     end
   end
 end
@@ -76,3 +84,6 @@ stats.vowel_counts
 
 puts "\nConsonant Count..."
 stats.consonant_counts
+
+puts "\nInitials"
+stats.initials
