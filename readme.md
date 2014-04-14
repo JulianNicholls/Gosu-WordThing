@@ -17,10 +17,10 @@ that he has done.
 
 The word list that I have chosen to construct from his files is:
 
-- Level 80, with...
+- Level 60, with...
 - English and British up to variant 1.
 - No possessives ('s), abbreviations, proper names, Roman numerals, or hacker words. 
-- Word lengths 3 to 14.
+- Word lengths 3 to 12.
 
 ### Playing Grid
 
@@ -29,4 +29,4 @@ There is now a 10x10 playing grid that allows selecting of letters using the mou
 ## gosu_enhanced gem
 
 It now uses the gosu_enhanced gem that I created from the source file that
-I've been using in various forms  for a while.
+I've been using in various forms for a while.
