@@ -153,11 +153,11 @@ module WordThing
 
     # Grid Builder
     class Builder
-      # These weightings are based on an analysis of wtwords.txt
+      # These weightings are based on an analysis of new wtwords.txt
 
-      CONS    = 'BBBCCCCCCCDDDDDFFGGGGHHHHJKKLLLLLLLLMMMMMNNNNNNNNNNN' \
-                'PPPPPQRRRRRRRRRRRSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTVVWXYYYZ'
-      VOWELS  = 'AAAAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIIIIIOOOOOOOOOUUUU'
+      CONS    = 'BBBCCCCCCDDDDDDFFGGGGGHHHHJKKLLLLLLLLMMMMNNNNNNNNNNN' \
+                'PPPPPQRRRRRRRRRRRRSSSSSSSSSSSSSSTTTTTTTTTTVVWWXYYYZ'
+      VOWELS  = 'AAAAAAAAAAEEEEEEEEEEEEEEEEIIIIIIIIIIIOOOOOOOOUUUUU'
 
       def self.new_grid( columns, rows )
         @grid = Array.new( columns ) do
@@ -165,10 +165,10 @@ module WordThing
         end
       end
 
-      # 62% consonant, 38% vowel with the weightings above
+      # 63% consonant, 37% vowel with the weightings above
 
       def self.random_letter
-        rand( 100 ) < 62 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
+        rand( 100 ) < 63 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
       end
     end
   end
