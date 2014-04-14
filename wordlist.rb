@@ -16,10 +16,18 @@ class WordList
     end
   end
 
+  # Does the list include the passed word.
+
   def include?( word )
     @words[word[0]].include? word
   end
-  
+
+  # Return a list of words starting with a given letter, of a given length
+
+  def words( init, length )
+    @words[init].select { |w| w.size == length }
+  end
+
   # Show the number of words in each letter section of the hash.
 
   def debug
