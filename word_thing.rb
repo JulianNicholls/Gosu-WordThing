@@ -15,7 +15,7 @@ module WordThing
     attr_reader :fonts, :images, :list
 
     KEY_FUNCS = {
-      Gosu::KbEscape  =>  -> { close },
+      Gosu::KbEscape  =>  -> { @grid.reset_word ; close if @debug },
       Gosu::KbR       =>  -> { reset },
       Gosu::KbReturn  =>  -> { add_word },
 
@@ -95,20 +95,23 @@ module WordThing
       @words.each do |w|
         total += w[:score]
         font.draw( w[:word], pos.x, pos.y, 1, 1, 1, BLUE )
-        font.draw( w[:score].to_s,
-                   pos.x + WORDLIST_SIZE.width - 28, pos.y, 1,
-                   1, 1, BLUE )
+        render_score( w[:score], pos.y, BLUE )
         pos.move_by!( 0, (7 * font.height) / 6 )
       end
 
       if total != 0
         font.draw( 'Total', pos.x, pos.y, 1, 1, 1, Gosu::Color::BLACK )
-        font.draw( total.to_s,
-                   pos.x + WORDLIST_SIZE.width - 28, pos.y, 1,
-                   1, 1, Gosu::Color::BLACK )
+        render_score( total, pos.y, Gosu::Color::BLACK )
       end
     end
-
+    
+    def render_score( score, top, colour )
+      font  = @fonts[:word]
+      left  = WORDLIST_POS.x + (WORDLIST_SIZE.width - 10) - 
+              font.text_width( score.to_s, 1 )
+      font.draw( score.to_s, left, top, 1, 1, 1, colour)
+    end
+    
     def draw_current_word
       word  = @grid.word
 
