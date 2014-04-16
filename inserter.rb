@@ -2,6 +2,7 @@ require './wordgrid'
 
 module WordThing
   class WordGrid
+    # Insert random words and letters into a grid
     class Inserter
       # These weightings are based on an analysis of new wtwords.txt
 
@@ -39,14 +40,13 @@ module WordThing
       def insert_word( word )
         pos     = GPoint.new( rand( @grid.columns ), rand( @grid.rows ) )
         neighs  = @grid.neighbours( pos )
-        idx     = 0
         poss    = []
 
-        until idx == word.size
-          c = @grid.cell_at pos
-          if c[:letter].empty? || c[:letter] == word[idx]
+        until poss.size == word.size
+          ltr = @grid.cell_at( pos )[:letter]
+
+          if ltr.empty? || ltr == word[poss.size]
             poss << pos
-            idx += 1
             neighs = @grid.neighbours( pos ) - poss
           end
 
@@ -54,7 +54,7 @@ module WordThing
           pos = neighs.pop
         end
 
-        poss.each_with_index { |p, idx| @grid.cell_at( p )[:letter] = word[idx] }
+        poss.each_with_index { |p, i| @grid.cell_at( p )[:letter] = word[i] }
 
         true
       end

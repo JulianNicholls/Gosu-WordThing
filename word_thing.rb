@@ -22,7 +22,7 @@ module WordThing
       Gosu::MsLeft    =>  -> { @position = Point.new( mouse_x, mouse_y ) }
     }
 
-    def initialize( debug, easy )
+    def initialize( debug )
       super( WIDTH, HEIGHT, false, 100 )
 
       @fonts  = ResourceLoader.fonts( self )
@@ -30,7 +30,6 @@ module WordThing
       @sounds = ResourceLoader.sounds( self )
 
       @debug  = debug
-      @easy   = easy
 
       self.caption = caption
 
@@ -40,7 +39,6 @@ module WordThing
 
     def caption
       caption = 'Word Thing'
-      caption += ' (Easy)'  if @easy
       caption += ' (Debug)' if @debug
 
       caption
@@ -92,6 +90,7 @@ module WordThing
       total = 0
       font  = @fonts[:word]
       pos   = WORDLIST_POS.offset( 5, 5 )
+
       @words.each do |w|
         total += w[:score]
         font.draw( w[:word], pos.x, pos.y, 1, 1, 1, BLUE )
@@ -104,14 +103,14 @@ module WordThing
         render_score( total, pos.y, Gosu::Color::BLACK )
       end
     end
-    
+
     def render_score( score, top, colour )
       font  = @fonts[:word]
-      left  = WORDLIST_POS.x + (WORDLIST_SIZE.width - 10) - 
+      left  = WORDLIST_POS.x + (WORDLIST_SIZE.width - 10) -
               font.text_width( score.to_s, 1 )
       font.draw( score.to_s, left, top, 1, 1, 1, colour)
     end
-    
+
     def draw_current_word
       word  = @grid.word
 
@@ -162,7 +161,6 @@ module WordThing
 end
 
 debug = ARGV.include? '--debug'
-easy  = ARGV.include? '--easy'
 
-window = WordThing::Game.new( debug, easy )
+window = WordThing::Game.new( debug )
 window.show

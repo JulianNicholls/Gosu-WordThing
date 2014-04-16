@@ -61,11 +61,11 @@ module WordThing
     def cell_at( gpoint )
       @grid[gpoint.col][gpoint.row]
     end
-    
+
     def each
       @grid.each do |col|
         col.each { |cell| yield cell }
-      end      
+      end
     end
 
     private
@@ -75,7 +75,7 @@ module WordThing
         Array.new( @rows ) { { letter: '', selected: false } }
       end
     end
-    
+
     def fill_in_words
       LENGTHS.each { |len| @inserter.add_word( len ) }
     end
