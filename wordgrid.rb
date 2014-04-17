@@ -20,8 +20,7 @@ module WordThing
       fill_in_words
       @inserter.fill_random
 
-      @word           = ''
-      @word_path      = []
+      @word, @word_path = '', []
     end
 
     def draw
