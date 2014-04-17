@@ -53,8 +53,8 @@ module WordThing
       @game_over  = false
       @position   = nil
       @moves      = 0
-      @start      = Time.now
-      @elapsed    = 0
+      @elapsed    = Time.now
+      @end        = @elapsed + 120
       @score      = 0
       @words      = []
     end
@@ -62,7 +62,7 @@ module WordThing
     def update
       update_game_over
 
-      @elapsed = (Time.now - @start).round unless @game_over
+      @elapsed = Time.now unless @game_over
 
       unless @position.nil?
         @grid.toggle_select @position
@@ -71,6 +71,7 @@ module WordThing
     end
 
     def update_game_over
+      @game_over = @elapsed > @end
     end
 
     def draw
@@ -125,7 +126,8 @@ module WordThing
 
     def draw_elapsed
       font = @fonts[:time]
-      text = format( 'Time  %d:%02d', @elapsed / 60, @elapsed % 60 )
+      left = (@end - @elapsed).round
+      text = format( 'Time  %d:%02d', left / 60, left % 60 )
       size = font.measure( text )
       left = WIDTH - (GAME_BORDER * 4) - size.width
 
