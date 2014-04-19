@@ -5,13 +5,14 @@ module WordThing
   class ResourceLoader
     def self.fonts( window )
       {
-        letter: Gosu::Font.new( window, 'Arial', 30 ),
-        word:   Gosu::Font.new( window, 'Arial', 20 ),
-        button: Gosu::Font.new( window, 'Arial', 20 ),
-        small:  Gosu::Font.new( window, 'Arial', 11 ),
-        time:   Gosu::Font.new( window, 'Arial', 25 ),
-        header: Gosu::Font.new( window, 'Arial', 56 ),
-        info:   Gosu::Font.new( window, 'Arial', 30 )
+        letter:     Gosu::Font.new( window, 'Arial', 30 ),
+        word:       Gosu::Font.new( window, 'Arial', 18 ),
+        word_small: Gosu::Font.new( window, 'Arial', 15 ),
+        button:     Gosu::Font.new( window, 'Arial', 18 ),
+        small:      Gosu::Font.new( window, 'Arial', 11 ),
+        time:       Gosu::Font.new( window, 'Arial', 25 ),
+        header:     Gosu::Font.new( window, 'Arial', 56 ),
+        info:       Gosu::Font.new( window, 'Arial', 30 )
       }
     end
 
@@ -26,7 +27,8 @@ module WordThing
     def self.sounds( window )
       {
         ok:   Gosu::Sample.new( window, 'media/ok.wav' ),
-        uhuh: Gosu::Sample.new( window, 'media/uhuh.wav' )
+        uhuh: Gosu::Sample.new( window, 'media/uhuh.wav' ),
+        blip: Gosu::Sample.new( window, 'media/blip.wav' )
       }
     end
   end
