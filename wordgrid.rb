@@ -9,13 +9,13 @@ module WordThing
 
     attr_reader :words, :word, :columns, :rows
 
-    LENGTHS = [9, 8, 7, 7, 6, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3]
+    LENGTHS = [9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3]
 
     def initialize( surface, columns = COLUMNS, rows = ROWS )
       @window         = surface
       @columns, @rows = columns, rows
       @region         = Region.new(
-                          GRID_ORIGIN, 
+                          GRID_ORIGIN,
                           Size.new( @columns * TILE_SIZE, @rows * TILE_SIZE ) )
 
       @grid           = new_grid
@@ -23,7 +23,7 @@ module WordThing
       @words          = []
       @inserter       = Inserter.new( self, @window.list )
       fill_in_words
-#      @inserter.fill_random
+      @inserter.fill_random
 
       @word, @word_path = '', []
     end
@@ -40,7 +40,7 @@ module WordThing
 
     def toggle_select( position )
       return false unless @region.contains?( position )
-      
+
       process_selection( GPoint.from_point( position ) )
       true    # Handled position
     end
@@ -85,7 +85,6 @@ module WordThing
 
     def fill_in_words
       LENGTHS.each { |len| @words << @inserter.add_word( len ) }
-      puts words
     end
 
     # process the selection / deselection
