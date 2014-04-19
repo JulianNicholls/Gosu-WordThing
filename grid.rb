@@ -1,3 +1,5 @@
+### CURRENTLY UNUSED ###
+
 require './constants'
 
 module WordThing

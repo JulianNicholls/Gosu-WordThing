@@ -1,24 +1,29 @@
 require './constants'
 require './inserter'
+require './gridpoint'
 
 module WordThing
   # Letter Grid
   class WordGrid
     include Constants
 
-    attr_reader :word, :columns, :rows
+    attr_reader :words, :word, :columns, :rows
 
     LENGTHS = [9, 8, 7, 7, 6, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3]
 
     def initialize( surface, columns = COLUMNS, rows = ROWS )
       @window         = surface
       @columns, @rows = columns, rows
+      @region         = Region.new(
+                          GRID_ORIGIN, 
+                          Size.new( @columns * TILE_SIZE, @rows * TILE_SIZE ) )
 
       @grid           = new_grid
 
+      @words          = []
       @inserter       = Inserter.new( self, @window.list )
       fill_in_words
-      @inserter.fill_random
+#      @inserter.fill_random
 
       @word, @word_path = '', []
     end
@@ -34,7 +39,10 @@ module WordThing
     end
 
     def toggle_select( position )
+      return false unless @region.contains?( position )
+      
       process_selection( GPoint.from_point( position ) )
+      true    # Handled position
     end
 
     def reset_word
@@ -76,7 +84,8 @@ module WordThing
     end
 
     def fill_in_words
-      LENGTHS.each { |len| @inserter.add_word( len ) }
+      LENGTHS.each { |len| @words << @inserter.add_word( len ) }
+      puts words
     end
 
     # process the selection / deselection
@@ -128,26 +137,6 @@ module WordThing
 
     def background_image( cell )
       cell[:selected] ? @window.images[:selected] : @window.images[:letter]
-    end
-
-    # Grid Point
-    class GPoint < Struct.new( :col, :row )
-      include Constants
-
-      def offset( x, y )
-        GPoint.new( col + x, row + y )
-      end
-
-      def to_point
-        GRID_ORIGIN.offset( col * TILE_SIZE, row * TILE_SIZE )
-      end
-
-      def self.from_point( pos )
-        GPoint.new(
-          ((pos.x - GRID_ORIGIN.x) / TILE_SIZE).floor,
-          ((pos.y - GRID_ORIGIN.y) / TILE_SIZE).floor
-        )
-      end
     end
   end
 end

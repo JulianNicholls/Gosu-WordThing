@@ -20,7 +20,8 @@ module WordThing
 
       def add_word( len )
         loop do
-          break if insert_word( select_word( len ) )
+          inserted = select_word( len )
+          return inserted if insert_word( inserted )
         end
       end
 
