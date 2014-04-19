@@ -25,6 +25,7 @@ The word list that I have chosen to construct from his files is:
 ### Playing Grid
 
 There is now a 10x10 playing grid that allows selecting of letters using the mouse.
+18 words of varying sizes are inserted.
 
 ## gosu_enhanced gem
 
