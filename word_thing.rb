@@ -6,6 +6,9 @@ require './constants'
 require './resources'
 require './wordgrid'
 require './wordlist'
+require './gameover'
+require './button'
+require './pos_handler'
 
 module WordThing
   # Word game thing
@@ -15,8 +18,8 @@ module WordThing
     attr_reader :fonts, :images, :list
 
     KEY_FUNCS = {
-      Gosu::KbEscape  =>  -> { @grid.reset_word ; close if @debug },
-      Gosu::KbR       =>  -> { reset },
+      Gosu::KbEscape  =>  -> { @grid.reset_word ; close if @debug || @game_over },
+      Gosu::KbR       =>  -> { reset if @game_over },
       Gosu::KbReturn  =>  -> { add_word },
 
       Gosu::MsLeft    =>  -> { @position = Point.new( mouse_x, mouse_y ) }
@@ -34,6 +37,7 @@ module WordThing
       self.caption = caption
 
       @list = WordList.new
+      add_enter_button
       reset
     end
 
@@ -48,6 +52,7 @@ module WordThing
       true
     end
 
+
     def reset
       @grid       = WordGrid.new( self )
       @game_over  = false
@@ -57,17 +62,23 @@ module WordThing
       @end        = @elapsed + 120
       @score      = 0
       @words      = []
+
+      set_position_handlers
     end
 
+    def set_position_handlers
+      @pos_handlers = PositionHandlers.new
+      @pos_handlers.add @grid, :toggle_select
+      @pos_handlers.add @enter, :press
+    end
+    
     def update
       update_game_over
 
       @elapsed = Time.now unless @game_over
-
-      unless @position.nil?
-        @grid.toggle_select @position
-        @position = nil
-      end
+      
+      @pos_handlers.pass @position
+      @position = nil
     end
 
     def update_game_over
@@ -81,27 +92,63 @@ module WordThing
       draw_words
       draw_current_word
       draw_elapsed
+      
+      @enter.draw
+      
+      GameOverWindow.new( self ).draw if @game_over
+    end
+    
+    def button_down( btn_id )
+      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
+    end
+    
+    def total_score
+      @words.reduce( 0 ) { |total, w| total + w[:score] }
     end
 
+    def add_word
+      word = @grid.word
+
+      if @list.include? word
+        @words << { word: word, score: word_score( word ) }
+        @grid.reset_word
+        @sounds[:ok].play
+      else
+        @sounds[:uhuh].play
+      end
+    end
+
+    private
+
+    def add_enter_button
+      font  = @fonts[:word]
+      text  = 'ENTER'
+      size  = font.measure( text ).inflate( 10, 10 )
+      pos   = WORDLIST_POS.offset( WORDLIST_SIZE ).offset( 
+                -(size.width + 5), -(size.height + 5) )
+      @enter = Button.new( self, pos, size, text, Gosu::Color::WHITE, BLUE ) do
+        @window.add_word
+      end
+    end
+    
     def draw_background
       @images[:background].draw( 0, 0, 0 )
     end
 
     def draw_words
-      total = 0
       font  = @fonts[:word]
       pos   = WORDLIST_POS.offset( 5, 5 )
 
       @words.each do |w|
-        total += w[:score]
         font.draw( w[:word], pos.x, pos.y, 1, 1, 1, BLUE )
         render_score( w[:score], pos.y, BLUE )
         pos.move_by!( 0, (7 * font.height) / 6 )
       end
 
-      if total != 0
+      if total_score != 0
+        pos.move_by!( 0, font.height / 6 )
         font.draw( 'Total', pos.x, pos.y, 1, 1, 1, Gosu::Color::BLACK )
-        render_score( total, pos.y, Gosu::Color::BLACK )
+        render_score( total_score, pos.y, Gosu::Color::BLACK )
       end
     end
 
@@ -125,32 +172,17 @@ module WordThing
     end
 
     def draw_elapsed
-      font = @fonts[:time]
-      left = (@end - @elapsed).round
-      text = format( 'Time  %d:%02d', left / 60, left % 60 )
-      size = font.measure( text )
-      left = WIDTH - (GAME_BORDER * 4) - size.width
+      font    = @fonts[:time]
+      left    = (@end - @elapsed).round
+      colour  = left <= 20 ? RED: BLUE
+      text    = format( 'Time  %d:%02d', left / 60, left % 60 )
+      size    = font.measure( text )
+      left    = WIDTH - (GAME_BORDER * 4) - size.width
 
-      font.draw( text, left, GAME_BORDER + 7, 4, 1, 1, BLUE )
+      font.draw( text, left, GAME_BORDER + 7, 4, 1, 1, colour )
     end
 
-    def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
-    end
-
-    def add_word
-      word = @grid.word
-
-      if @list.include? word
-        @words << { word: word, score: score( word ) }
-        @grid.reset_word
-        @sounds[:ok].play
-      else
-        @sounds[:uhuh].play
-      end
-    end
-
-    def score( word )
+    def word_score( word )
       total = word.each_char.reduce( 0 ) do |tot, ltr|
         ltr = ltr.downcase.to_sym
 
