@@ -10,21 +10,17 @@ module WordThing
   class Fonts < Gosu::Window
     include Constants
 
-    attr_reader :fonts, :images
-
     KEY_FUNCS = {
       Gosu::KbEscape =>  -> { close },
-      Gosu::KbR      =>  -> { reset },
-
-      Gosu::MsLeft   =>  -> { @position = Point.new( mouse_x, mouse_y ) }
     }
 
     def initialize
       super( WIDTH, HEIGHT, false, 200 )
 
       @fonts  = ResourceLoader.fonts( self )
-      @images = ResourceLoader.fonts( self )
 
+      arrange_fonts
+      
       self.caption = caption
     end
 
@@ -44,7 +40,7 @@ module WordThing
       tl    = Point.new( 0, 0 )
       size  = Size.new( WIDTH, HEIGHT )
       draw_rectangle( tl, size, 0, Gosu::Color::WHITE )
-      draw_rectangle( tl.offset( 5, 5 ), size.deflate( 10, 10 ), 0, GRID_BG )
+      draw_rectangle( tl.offset( 5, 5 ), size.deflate( 10, 10 ), 0, Gosu::Color::BLACK )
     end
 
     def draw_fonts
@@ -65,8 +61,13 @@ module WordThing
     def button_down( btn_id )
       instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
     end
+    
+    private
+    
+    def arrange_fonts
+      @fonts = @fonts.sort_by { |k, v| v.height }
+    end
   end
 end
 
-window = WordThing::Fonts.new
-window.show
+WordThing::Fonts.new.show
