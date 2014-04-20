@@ -130,7 +130,7 @@ module WordThing
     end
 
     def add_word_index( gpoint, widx )
-      ltr_pos = gpoint.to_point.offset( 5, 3 )
+      ltr_pos = gpoint.to_point.offset( 6, 4 )
       @window.fonts[:small].draw( widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE )
     end
 
