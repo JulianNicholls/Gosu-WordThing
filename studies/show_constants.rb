@@ -1,16 +1,13 @@
 #! /usr/bin/env ruby
 
-# puts "FILE: #{__FILE__}"
 lib = File.expand_path('../..', __FILE__)   # Seems wrong to me
-# puts "lib: #{lib}"
-# puts "LP before:", $LOAD_PATH
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-#puts "LP After:", $LOAD_PATH
 
 require 'gosu_enhanced'
 
 require 'constants'
 
+# Show the constants contained in WordThing::Constants
 class ConstantViewer
   def initialize
     @wc = WordThing::Constants
@@ -26,9 +23,9 @@ class ConstantViewer
     printf "\n%25s\n", 'OTHERS'
     @objects.sort.each { |v| printf( "%-20s %s\n", v, const( v ) ) }
   end
-  
+
   private
-  
+
   def const( name )
     @wc.const_get name
   end

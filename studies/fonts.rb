@@ -11,7 +11,7 @@ module WordThing
     include Constants
 
     KEY_FUNCS = {
-      Gosu::KbEscape =>  -> { close },
+      Gosu::KbEscape =>  -> { close }
     }
 
     def initialize
@@ -20,7 +20,7 @@ module WordThing
       @fonts  = ResourceLoader.fonts( self )
 
       arrange_fonts
-      
+
       self.caption = caption
     end
 
@@ -61,9 +61,9 @@ module WordThing
     def button_down( btn_id )
       instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
     end
-    
+
     private
-    
+
     def arrange_fonts
       @fonts = @fonts.sort_by { |k, v| v.height }
     end
