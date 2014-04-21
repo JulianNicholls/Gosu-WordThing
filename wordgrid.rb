@@ -3,7 +3,7 @@ require './inserter'
 require './gridpoint'
 
 module WordThing
-  # Letter Grid
+  # Grid into which words are inserted
   class WordGrid
     include Constants
 
@@ -11,19 +11,14 @@ module WordThing
 
     LENGTHS = [9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3]
 
-    def initialize( surface, columns = COLUMNS, rows = ROWS )
-      @window         = surface
+    def initialize( game, columns = COLUMNS, rows = ROWS )
+      @game           = game
       @columns, @rows = columns, rows
       @region         = Region.new(
                           GRID_ORIGIN,
                           Size.new( @columns * TILE_SIZE, @rows * TILE_SIZE ) )
 
-      @grid           = new_grid
-
-      @words          = []
-      @inserter       = Inserter.new( self, @window.list )
-      fill_in_words
-      @inserter.fill_random
+      initialize_grid
 
       @word, @word_path = '', []
     end
@@ -77,14 +72,20 @@ module WordThing
 
     private
 
+    def initialize_grid
+      @grid     = new_grid
+      @words    = []
+      inserter  = Inserter.new( self, @game.list )
+
+      LENGTHS.each { |len| @words << inserter.add_word( len ) }
+
+      inserter.fill_random
+    end
+
     def new_grid
       Array.new( @columns ) do
         Array.new( @rows ) { { letter: '', selected: false } }
       end
-    end
-
-    def fill_in_words
-      LENGTHS.each { |len| @words << @inserter.add_word( len ) }
     end
 
     # process the selection / deselection
@@ -95,25 +96,32 @@ module WordThing
     def process_selection( gpoint )
       cell = cell_at( gpoint )
 
-      if cell[:selected]
-        if @word_path[-1] == gpoint
-          cell[:selected] = false
-          @word.slice!( -1 )
-          @word_path.pop
-        end
-      elsif word.size == 0 || neighbours( @word_path[-1] ).include?( gpoint )
-        cell[:selected] = true
-        @word << cell[:letter]
-        @word_path << gpoint
-      end
+      unselect_cell( gpoint, cell ) && return if cell[:selected] && @word_path[-1] == gpoint
+
+      select_cell( gpoint, cell ) if valid_next( gpoint )
     end
 
-    def in_grid?( x, y = nil )
-      if x.respond_to? :col
-        x.col.between?( 0, @columns - 1 ) && x.row.between?( 0, @rows - 1 )
-      else
-        x.between?( 0, @columns - 1 ) && y.between?( 0, @rows - 1 )
-      end
+    def valid_next( gpoint )
+      @word.size == 0 ||
+      (!@word_path.include?( gpoint ) &&
+      neighbours( @word_path[-1] ).include?( gpoint ))
+    end
+
+    def select_cell( gpoint, cell )
+      cell[:selected] = true
+      @word << cell[:letter]
+      @word_path << gpoint
+    end
+
+    def unselect_cell( gpoint, cell )
+      cell[:selected] = false
+      @word.slice!( -1 )
+      @word_path.slice!( -1 )
+    end
+
+    def in_grid?( gpoint )
+      gpoint.col.between?( 0, @columns - 1 ) &&
+      gpoint.row.between?( 0, @rows - 1 )
     end
 
     def render( gpoint, cell )
@@ -122,7 +130,7 @@ module WordThing
 
       return if cell[:letter].empty?
 
-      font      = @window.fonts[:letter]
+      font      = @game.fonts[:letter]
       ltr_ctr   = font.centred_in( cell[:letter], Size.new( TILE_SIZE, TILE_SIZE ) )
       ltr_point = point.offset( ltr_ctr )
 
@@ -131,11 +139,11 @@ module WordThing
 
     def add_word_index( gpoint, widx )
       ltr_pos = gpoint.to_point.offset( 6, 4 )
-      @window.fonts[:small].draw( widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE )
+      @game.fonts[:small].draw( widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE )
     end
 
     def background_image( cell )
-      cell[:selected] ? @window.images[:selected] : @window.images[:letter]
+      cell[:selected] ? @game.images[:selected] : @game.images[:letter]
     end
   end
 end
