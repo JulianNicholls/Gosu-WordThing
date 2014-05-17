@@ -1,9 +1,12 @@
 #! /usr/bin/env ruby
 
+lib = File.expand_path('../..', __FILE__)   # Seems wrong to me
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'gosu_enhanced'
 
-require '../constants'
-require '../resources'
+require 'constants'
+require 'resources'
 
 module WordThing
   # Word game thing

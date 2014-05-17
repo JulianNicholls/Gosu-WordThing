@@ -1,4 +1,4 @@
-require 'gosu'
+require 'gosu_enhanced'
 
 module WordThing
   # Resource Loader
