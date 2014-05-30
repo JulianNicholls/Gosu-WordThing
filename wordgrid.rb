@@ -52,6 +52,7 @@ module WordThing
       (-1..1).each do |xd|
         (-1..1).each do |yd|
           next if xd == 0 && yd == 0
+
           pos = gpos.offset( xd, yd )
           neighs << pos if in_grid? pos
         end
@@ -65,9 +66,7 @@ module WordThing
     end
 
     def each
-      @grid.each do |col|
-        col.each { |cell| yield cell }
-      end
+      @grid.each { |col| col.each { |cell| yield cell } }
     end
 
     private
@@ -96,7 +95,7 @@ module WordThing
     def process_selection( gpoint )
       cell = cell_at( gpoint )
 
-      unselect_cell( gpoint, cell ) && return if cell[:selected] && @word_path[-1] == gpoint
+      return unselect_cell( cell ) if cell[:selected] && @word_path[-1] == gpoint
 
       select_cell( gpoint, cell ) if valid_next( gpoint )
     end
@@ -113,7 +112,7 @@ module WordThing
       @word_path << gpoint
     end
 
-    def unselect_cell( gpoint, cell )
+    def unselect_cell( cell )
       cell[:selected] = false
       @word.slice!( -1 )
       @word_path.slice!( -1 )

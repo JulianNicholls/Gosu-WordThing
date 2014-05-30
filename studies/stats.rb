@@ -14,7 +14,7 @@ class WordsStatistics
   def raw_by_count( order = :ascending )
     @counts ||= count_letters
 
-    counts = @counts.sort_by { |k, v| v }
+    counts = @counts.sort_by { |_, v| v }
     counts = counts.reverse if order == :descending
 
     counts.each { |k, v| puts "#{k}: #{v}" }

@@ -43,7 +43,8 @@ module WordThing
       tl    = Point.new( 0, 0 )
       size  = Size.new( WIDTH, HEIGHT )
       draw_rectangle( tl, size, 0, Gosu::Color::WHITE )
-      draw_rectangle( tl.offset( 5, 5 ), size.deflate( 10, 10 ), 0, Gosu::Color::BLACK )
+      draw_rectangle( tl.offset( 5, 5 ), size.deflate( 10, 10 ),
+                      0, Gosu::Color::BLACK )
     end
 
     def draw_fonts
@@ -68,7 +69,7 @@ module WordThing
     private
 
     def arrange_fonts
-      @fonts = @fonts.sort_by { |k, v| v.height }
+      @fonts = @fonts.sort_by { |_, v| v.height }
     end
   end
 end

@@ -10,8 +10,8 @@ module WordThing
     TILE_SIZE       = 50
     HEADER_HEIGHT   = 40
 
-    WIDTH           = 795 # GAME_BORDER * 3 + GRID_BLOCKS * TILE_SIZE + WORDLIST_SIZE.width
-    HEIGHT          = 655 # GAME_BORDER * 3 + GRID_BLOCKS * TILE_SIZE + HEADER_HEIGHT
+    WIDTH           = 795 # BORDER * 3 + BLOCKS * TILE_SIZE + WORDLIST_SIZE.width
+    HEIGHT          = 655 # BORDER * 3 + BLOCKS * TILE_SIZE + HEADER_HEIGHT
 
     WORDLIST_SIZE   = Size.new( 180, 600 ) # GRID_BLOCKS * TILE_SIZE
 
