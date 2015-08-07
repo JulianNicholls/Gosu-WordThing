@@ -11,22 +11,22 @@ require 'constants'
 class ConstantViewer
   def initialize
     @wc = WordThing::Constants
-    @values, @objects = @wc.constants.partition { |c| const( c ).is_a? Fixnum }
+    @values, @objects = @wc.constants.partition { |c| const(c).is_a? Fixnum }
   end
 
   def show_values
     printf "%25s\n", 'VALUES'
-    @values.sort.each { |v| printf( "%-20s %d\n", v, const( v ) ) }
+    @values.sort.each { |v| printf("%-20s %d\n", v, const(v)) }
   end
 
   def show_others
     printf "\n%25s\n", 'OTHERS'
-    @objects.sort.each { |v| printf( "%-20s %s\n", v, const( v ) ) }
+    @objects.sort.each { |v| printf("%-20s %s\n", v, const(v)) }
   end
 
   private
 
-  def const( name )
+  def const(name)
     @wc.const_get name
   end
 end

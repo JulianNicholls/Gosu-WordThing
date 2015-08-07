@@ -4,9 +4,9 @@ module WordThing
   class Button
     include GosuEnhanced
 
-    def initialize( surface, pos, size, text, text_clr, bkgr_clr, &press_block )
+    def initialize(surface, pos, size, text, text_clr, bkgr_clr, &press_block)
       @window   = surface
-      @region   = Region.new( pos, size )
+      @region   = Region.new(pos, size)
       @caption  = text
       @text     = text_clr
       @bkgr     = bkgr_clr
@@ -14,17 +14,17 @@ module WordThing
     end
 
     def draw
-      @region.draw( @window, 2, @bkgr )
+      @region.draw(@window, 2, @bkgr)
 
       font = @window.fonts[:button]
-      pos  = @region.position.offset( font.centred_in( @caption, @region.size ) )
-      font.draw( @caption, pos.x, pos.y, 2, 1, 1, @text )
+      pos  = @region.position.offset(font.centred_in(@caption, @region.size))
+      font.draw(@caption, pos.x, pos.y, 2, 1, 1, @text)
     end
 
-    def press( pos )
+    def press(pos)
       return false unless @region.contains? pos
 
-      instance_eval( &@block )
+      instance_eval(&@block)
     end
   end
 end

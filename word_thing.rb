@@ -12,8 +12,8 @@ require './pos_handler'
 require './drawer'
 
 module WordThing
-  class Word < Struct.new( :word, :score )
-  end
+  # Word storage
+  Word = Struct.new(:word, :score)
 
   # Word game thing
   class Game < Gosu::Window
@@ -26,21 +26,23 @@ module WordThing
       Gosu::KbR       =>  -> { reset if @game_over },
       Gosu::KbReturn  =>  -> { add_word },
 
-      Gosu::MsLeft    =>  -> { @position = Point.new( mouse_x, mouse_y ) }
+      Gosu::MsLeft    =>  -> { @position = Point.new(mouse_x, mouse_y) }
     }
 
-    def initialize( debug )
-      super( WIDTH, HEIGHT, false, 100 )
+    def initialize(debug)
+      super(WIDTH, HEIGHT, false, 100)
 
       @debug  = debug
 
       self.caption = caption
 
-      @fonts  = ResourceLoader.fonts( self )
-      @images = ResourceLoader.images( self )
-      @sounds = ResourceLoader.sounds( self )
+      loader = ResourceLoader.new(self)
 
-      @drawer = Drawer.new( self )
+      @fonts  = loader.fonts
+      @images = loader.images
+      @sounds = loader.sounds
+
+      @drawer = Drawer.new(self)
 
       @list   = WordList.new
 
@@ -60,14 +62,14 @@ module WordThing
     end
 
     def reset
-      @grid       = WordGrid.new( self )
+      @grid       = WordGrid.new(self)
       @game_over  = false
       @position   = nil
       @moves      = 0
       @elapsed    = Time.now
       @end        = @elapsed + TIME_LIMIT
       @score      = 0
-      @words      = @grid.words.map { |w| Word.new( w, 0 ) }
+      @words      = @grid.words.map { |w| Word.new(w, 0) }
 
       set_position_handlers
     end
@@ -95,36 +97,36 @@ module WordThing
       draw_background
 
       @grid.draw
-      @drawer.words( @words )
-      @drawer.current( @grid.word ) unless @grid.word.empty?
+      @drawer.words(@words)
+      @drawer.current(@grid.word) unless @grid.word.empty?
       draw_elapsed
 
       @enter.draw
 
-      GameOverWindow.new( self ).draw if @game_over
+      GameOverWindow.new(self).draw if @game_over
     end
 
-    def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
+    def button_down(btn_id)
+      instance_exec(&KEY_FUNCS[btn_id]) if KEY_FUNCS.key? btn_id
     end
 
     def total_score
-      @words.reduce( 0 ) { |a, e| a + e.score }
+      @words.reduce(0) { |a, e| a + e.score }
     end
 
     def add_word
       word = @grid.word
 
       @words.each do |w|
-        if w.word == word
-          w.score = word_score( word )
-          ok_word
-          return
-        end
+        next unless w.word == word
+
+        w.score = word_score(word)
+        ok_word
+        return
       end
 
       if @list.include? word
-        @words << Word.new( word, word_score( word ) + 3 * word.size )
+        @words << Word.new(word, word_score(word) + 3 * word.size)
         ok_word
       else
         @sounds[:uhuh].play
@@ -146,16 +148,16 @@ module WordThing
     def add_enter_button
       font  = @fonts[:word]
       text  = 'ENTER'
-      size  = font.measure( text ).inflate( 10, 10 )
-      pos   = WORDLIST_POS.offset( WORDLIST_SIZE ).offset(
-                -(size.width + 5), -(size.height + 5) )
-      @enter = Button.new( self, pos, size, text, BUTTON_TEXT, BUTTON_BG ) do
+      size  = font.measure(text).inflate(10, 10)
+      pos   = WORDLIST_POS.offset(WORDLIST_SIZE).offset(
+                -(size.width + 5), -(size.height + 5))
+      @enter = Button.new(self, pos, size, text, BUTTON_TEXT, BUTTON_BG) do
         @window.add_word
       end
     end
 
     def draw_background
-      @images[:background].draw( 0, 0, 0 )
+      @images[:background].draw(0, 0, 0)
     end
 
     def draw_elapsed
@@ -172,18 +174,18 @@ module WordThing
         colour = RED
       end
 
-      text  = format( 'Time  %d:%02d', left / 60, left % 60 )
-      size  = font.measure( text )
+      text  = format('Time  %d:%02d', left / 60, left % 60)
+      size  = font.measure(text)
       left  = WIDTH - (GAME_BORDER * 4) - size.width
 
-      font.draw( text, left, GAME_BORDER + 7, 4, 1, 1, colour )
+      font.draw(text, left, GAME_BORDER + 7, 4, 1, 1, colour)
     end
 
-    def word_score( word )
-      total = word.each_char.reduce( 0 ) do |tot, ltr|
+    def word_score(word)
+      total = word.each_char.reduce(0) do |tot, ltr|
         ltr = ltr.downcase.to_sym
 
-        tot + (SCORES.key?( ltr ) ? SCORES[ltr] : 1)
+        tot + (SCORES.key?(ltr) ? SCORES[ltr] : 1)
       end
 
       total * [word.size - 4, 1].max
@@ -193,5 +195,5 @@ end
 
 debug = ARGV.include? '--debug'
 
-window = WordThing::Game.new( debug )
+window = WordThing::Game.new(debug)
 window.show

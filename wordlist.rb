@@ -8,23 +8,23 @@ class WordList
   # Initialise the array from a word list file, defaulting to wtwords.txt
   # using magic hash key array creation thing learnt from Ruby Koans
 
-  def initialize( filename = 'wtwords.txt' )
+  def initialize(filename = 'wtwords.txt')
     @words = Hash.new { |hash, key| hash[key] = [] }
 
-    File.foreach( filename ) do |line|
+    File.foreach(filename) do |line|
       @words[line[0]] << line.chomp
     end
   end
 
   # Does the list include the passed word.
 
-  def include?( word )
+  def include?(word)
     @words[word[0]].include? word
   end
 
   # Return a list of words starting with a given letter, of a given length
 
-  def words( init, length )
+  def words(init, length)
     @words[init].select { |w| w.size == length }
   end
 
