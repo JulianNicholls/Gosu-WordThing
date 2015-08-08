@@ -9,12 +9,12 @@ module WordThing
     include Constants
 
     def initialize(surface)
-      @fonts  = ResourceLoader.fonts(surface)
+      @fonts  = ResourceLoader.new(surface).fonts
       @window = surface
     end
 
     def say(text, font, x, y, colour)
-      size = font.measure(text) if x == :center || y == :center
+      size = font.measure(text)
 
       x = (WIDTH - size.width) / 2   if x == :center
       y = (HEIGHT - size.height) / 2 if y == :center

@@ -4,9 +4,9 @@ module WordThing
   class Button
     include GosuEnhanced
 
-    def initialize(surface, pos, size, text, text_clr, bkgr_clr, &press_block)
+    def initialize(surface, region, text, text_clr, bkgr_clr, &press_block)
       @window   = surface
-      @region   = Region.new(pos, size)
+      @region   = region
       @caption  = text
       @text     = text_clr
       @bkgr     = bkgr_clr

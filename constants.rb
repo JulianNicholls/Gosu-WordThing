@@ -10,16 +10,18 @@ module WordThing
     TILE_SIZE       = 50
     HEADER_HEIGHT   = 40
 
-    WIDTH           = 795 # BORDER * 3 + BLOCKS * TILE_SIZE + WORDLIST_SIZE.width
-    HEIGHT          = 655 # BORDER * 3 + BLOCKS * TILE_SIZE + HEADER_HEIGHT
+    WIDTH           = 795 # BORDER*3 + BLOCKS * TILE_SIZE + WORDLIST_SIZE.width
+    HEIGHT          = 655 # BORDER*3 + BLOCKS * TILE_SIZE + HEADER_HEIGHT
 
-    WORDLIST_SIZE   = Size.new(180, 600) # GRID_BLOCKS * TILE_SIZE
+    WORDLIST_SIZE   = Size.new(180, 600)    # GRID_BLOCKS * TILE_SIZE
 
     WORDLIST_POS    = Point.new(WIDTH - GAME_BORDER - WORDLIST_SIZE.width,
                                 GAME_BORDER * 2 + HEADER_HEIGHT)
 
-    GRID_ORIGIN     = Point.new(GAME_BORDER + TILE_SIZE / 2,
-                                GAME_BORDER * 2 + HEADER_HEIGHT + TILE_SIZE / 2)
+    GRID_ORIGIN     = Point.new(
+      GAME_BORDER + TILE_SIZE / 2,
+      GAME_BORDER * 2 + HEADER_HEIGHT + TILE_SIZE / 2
+    )
 
     CYAN            = Gosu::Color.new(0xff, 0x00, 0xa0, 0xa0)
     BLUE            = Gosu::Color.new(0xff, 0x00, 0x00, 0xc8)

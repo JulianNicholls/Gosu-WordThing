@@ -11,6 +11,7 @@ require './button'
 require './pos_handler'
 require './drawer'
 
+# Word thing module
 module WordThing
   # Word storage
   Word = Struct.new(:word, :score)
@@ -36,11 +37,7 @@ module WordThing
 
       self.caption = caption
 
-      loader = ResourceLoader.new(self)
-
-      @fonts  = loader.fonts
-      @images = loader.images
-      @sounds = loader.sounds
+      load_resources
 
       @drawer = Drawer.new(self)
 
@@ -135,6 +132,14 @@ module WordThing
 
     private
 
+    def load_resources
+      loader = ResourceLoader.new(self)
+
+      @fonts  = loader.fonts
+      @images = loader.images
+      @sounds = loader.sounds
+    end
+
     def handle_escape
       @grid.reset_word
       close if @debug || @game_over
@@ -151,7 +156,8 @@ module WordThing
       size  = font.measure(text).inflate(10, 10)
       pos   = WORDLIST_POS.offset(WORDLIST_SIZE).offset(
                 -(size.width + 5), -(size.height + 5))
-      @enter = Button.new(self, pos, size, text, BUTTON_TEXT, BUTTON_BG) do
+
+      @enter = Button.new(self, Region.new(pos, size), text, BUTTON_TEXT, BUTTON_BG) do
         @window.add_word
       end
     end
@@ -185,7 +191,7 @@ module WordThing
       total = word.each_char.reduce(0) do |tot, ltr|
         ltr = ltr.downcase.to_sym
 
-        tot + (SCORES.key?(ltr) ? SCORES[ltr] : 1)
+        tot + SCORES.fetch(ltr, 1)
       end
 
       total * [word.size - 4, 1].max

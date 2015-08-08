@@ -16,7 +16,7 @@ module WordThing
       end
 
       def fill_random
-        @grid.each { |cell| cell[:letter] = random_letter if cell[:letter].empty? }
+        @grid.each { |cell| random_fill(cell) }
       end
 
       def add_word(len)
@@ -59,6 +59,10 @@ module WordThing
         poss.each_with_index { |p, i| @grid.cell_at(p)[:letter] = word[i] }
 
         true
+      end
+
+      def random_fill(cell)
+        cell[:letter] = random_letter if cell[:letter].empty?
       end
 
       # 63% consonant, 37% vowel with the weightings above

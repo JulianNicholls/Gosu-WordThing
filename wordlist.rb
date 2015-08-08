@@ -11,9 +11,7 @@ class WordList
   def initialize(filename = 'wtwords.txt')
     @words = Hash.new { |hash, key| hash[key] = [] }
 
-    File.foreach(filename) do |line|
-      @words[line[0]] << line.chomp
-    end
+    load(filename)
   end
 
   # Does the list include the passed word.
@@ -32,5 +30,15 @@ class WordList
 
   def debug
     @words.each_key { |ltr| printf "%c: %5d\n", ltr.upcase, @words[ltr].length }
+  end
+
+  private
+
+  def load(filename)
+    File.foreach(filename) { |line| add line.chomp }
+  end
+
+  def add(word)
+    @words[word[0]] << word
   end
 end
