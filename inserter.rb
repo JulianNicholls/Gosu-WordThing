@@ -4,19 +4,13 @@ module WordThing
   class WordGrid
     # Insert random words and letters into a grid
     class Inserter
-      # These weightings are based on an analysis of new wtwords.txt
-
-      CONS    = 'BBBCCCCCCDDDDDDFFGGGGGHHHHJKKLLLLLLLLMMMMNNNNNNNNNNN' \
-                'PPPPPQRRRRRRRRRRRRSSSSSSSSSSSSSSTTTTTTTTTTVVWWXYYYZ'
-      VOWELS  = 'AAAAAAAAAAEEEEEEEEEEEEEEEEIIIIIIIIIIIOOOOOOOOUUUUU'
-
       def initialize(grid, wordlist)
         @grid = grid
         @list = wordlist
       end
 
       def fill_random
-        @grid.each { |cell| random_fill(cell) }
+        @grid.each { |cell| cell.randomise }
       end
 
       def add_word(len)
@@ -45,7 +39,7 @@ module WordThing
         poss    = []
 
         until poss.size == word.size
-          ltr = @grid.cell_at(pos)[:letter]
+          ltr = @grid.cell_at(pos).letter
 
           if ltr.empty? || ltr == word[poss.size]
             poss << pos
@@ -56,19 +50,9 @@ module WordThing
           pos = neighs.pop
         end
 
-        poss.each_with_index { |p, i| @grid.cell_at(p)[:letter] = word[i] }
+        poss.each_with_index { |p, i| @grid.cell_at(p).letter = word[i] }
 
         true
-      end
-
-      def random_fill(cell)
-        cell[:letter] = random_letter if cell[:letter].empty?
-      end
-
-      # 63% consonant, 37% vowel with the weightings above
-
-      def random_letter
-        rand(100) < 63 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
       end
     end
   end

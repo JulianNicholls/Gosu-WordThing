@@ -3,6 +3,45 @@ require './inserter'
 require './gridpoint'
 
 module WordThing
+  class Cell
+    # These weightings are based on an analysis of new wtwords.txt
+
+    CONS    = 'BBBCCCCCCDDDDDDFFGGGGGHHHHJKKLLLLLLLLMMMMNNNNNNNNNNN' \
+              'PPPPPQRRRRRRRRRRRRSSSSSSSSSSSSSSTTTTTTTTTTVVWWXYYYZ'
+    VOWELS  = 'AAAAAAAAAAEEEEEEEEEEEEEEEEIIIIIIIIIIIOOOOOOOOUUUUU'
+
+    attr_accessor :letter
+
+    def initialize
+      @letter = ''
+      @selected = false
+    end
+
+    def toggle_selected
+      @selected = !@selected
+    end
+
+    def empty?
+      letter == ''
+    end
+
+    def selected?
+      @selected
+    end
+
+    def randomise
+      @letter = random_letter if empty?
+    end
+
+    private
+
+    # 63% consonant, 37% vowel with the weightings above
+
+    def random_letter
+      rand(100) < 63 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
+    end
+  end
+
   # Grid into which words are inserted
   class WordGrid
     include Constants
@@ -45,7 +84,7 @@ module WordThing
     def reset_word
       @word = ''
 
-      cell_at(@word_path.pop)[:selected] = false while @word_path.size > 0
+      cell_at(@word_path.pop).toggle_selected while @word_path.size > 0
     end
 
     def neighbours(gpos)
@@ -85,7 +124,7 @@ module WordThing
 
     def new_grid
       Array.new(@columns) do
-        Array.new(@rows) { { letter: '', selected: false } }
+        Array.new(@rows) { Cell.new }
       end
     end
 
@@ -97,7 +136,7 @@ module WordThing
     def process_selection(gpoint)
       cell = cell_at(gpoint)
 
-      return unselect_cell(cell) if cell[:selected] && @word_path[-1] == gpoint
+      return unselect_cell(cell) if cell.selected? && @word_path[-1] == gpoint
 
       select_cell(gpoint, cell) if valid_next(gpoint)
     end
@@ -109,13 +148,13 @@ module WordThing
     end
 
     def select_cell(gpoint, cell)
-      cell[:selected] = true
-      @word << cell[:letter]
+      cell.toggle_selected
+      @word << cell.letter
       @word_path << gpoint
     end
 
     def unselect_cell(cell)
-      cell[:selected] = false
+      cell.toggle_selected
       @word.slice!(-1)
       @word_path.slice!(-1)
     end
@@ -129,13 +168,14 @@ module WordThing
       point = gpoint.to_point
       background_image(cell).draw(point.x, point.y, 1)
 
-      return if cell[:letter].empty?
+      return if cell.empty?
 
+      letter    = cell.letter
       font      = @game.fonts[:letter]
-      ltr_ctr   = font.centred_in(cell[:letter], Size.new(TILE_SIZE, TILE_SIZE))
+      ltr_ctr   = font.centred_in(letter, Size.new(TILE_SIZE, TILE_SIZE))
       ltr_point = point.offset(ltr_ctr)
 
-      font.draw(cell[:letter], ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
+      font.draw(letter, ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
     end
 
     def add_word_index(gpoint, widx)
@@ -144,7 +184,7 @@ module WordThing
     end
 
     def background_image(cell)
-      cell[:selected] ? @game.images[:selected] : @game.images[:letter]
+      cell.selected? ? @game.images[:selected] : @game.images[:letter]
     end
   end
 end
