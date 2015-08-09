@@ -10,14 +10,18 @@ module WordThing
       end
 
       def fill_random
-        @grid.each { |cell| cell.randomise }
+        @grid.each(&:randomise)
       end
 
       def add_word(len)
+        inserted = ''
+
         loop do
           inserted = select_word(len)
-          return inserted if insert_word(inserted)
+          break if insert_word(inserted)
         end
+
+        inserted
       end
 
       private
@@ -34,7 +38,7 @@ module WordThing
       end
 
       def insert_word(word)
-        pos     = GPoint.new(rand(@grid.columns), rand(@grid.rows))
+        pos     = random_start_position
         neighs  = @grid.neighbours(pos)
         poss    = []
 
@@ -53,6 +57,10 @@ module WordThing
         poss.each_with_index { |p, i| @grid.cell_at(p).letter = word[i] }
 
         true
+      end
+
+      def random_start_position
+        GPoint.new(rand(1...@grid.columns), rand(1...@grid.rows))
       end
     end
   end
