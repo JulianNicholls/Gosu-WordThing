@@ -3,22 +3,21 @@ module WordThing
   # inside the button region.
   class Button
     include GosuEnhanced
+    include Constants
 
-    def initialize(surface, region, text, text_clr, bkgr_clr, &press_block)
+    def initialize(surface, region, text, &press_block)
       @window   = surface
       @region   = region
       @caption  = text
-      @text     = text_clr
-      @bkgr     = bkgr_clr
       @block    = press_block
     end
 
     def draw
-      @region.draw(@window, 2, @bkgr)
+      @region.draw(@window, 2, BUTTON_BG)
 
       font = @window.fonts[:button]
       pos  = @region.position.offset(font.centred_in(@caption, @region.size))
-      font.draw(@caption, pos.x, pos.y, 2, 1, 1, @text)
+      font.draw(@caption, pos.x, pos.y, 2, 1, 1, BUTTON_TEXT)
     end
 
     def press(pos)
