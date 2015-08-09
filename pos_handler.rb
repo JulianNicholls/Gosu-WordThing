@@ -20,7 +20,7 @@ module WordThing
       return if pos.nil?
 
       @list.each do |object, method|
-        return if object.__send__(method, pos)
+        break if object.__send__(method, pos)
       end
     end
   end
