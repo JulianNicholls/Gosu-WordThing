@@ -1,47 +1,9 @@
 require './constants'
 require './inserter'
 require './gridpoint'
+require './cell'
 
 module WordThing
-  class Cell
-    # These weightings are based on an analysis of new wtwords.txt
-
-    CONS    = 'BBBCCCCCCDDDDDDFFGGGGGHHHHJKKLLLLLLLLMMMMNNNNNNNNNNN' \
-              'PPPPPQRRRRRRRRRRRRSSSSSSSSSSSSSSTTTTTTTTTTVVWWXYYYZ'
-    VOWELS  = 'AAAAAAAAAAEEEEEEEEEEEEEEEEIIIIIIIIIIIOOOOOOOOUUUUU'
-
-    attr_accessor :letter
-
-    def initialize
-      @letter = ''
-      @selected = false
-    end
-
-    def toggle_selected
-      @selected = !@selected
-    end
-
-    def empty?
-      letter == ''
-    end
-
-    def selected?
-      @selected
-    end
-
-    def randomise
-      @letter = random_letter if empty?
-    end
-
-    private
-
-    # 63% consonant, 37% vowel with the weightings above
-
-    def random_letter
-      rand(100) < 63 ? CONS[rand CONS.size] : VOWELS[rand VOWELS.size]
-    end
-  end
-
   # Grid into which words are inserted
   class WordGrid
     include Constants
@@ -69,9 +31,9 @@ module WordThing
         col.each_with_index { |cell, r| render(GPoint.new(c, r), cell) }
       end
 
-      @word_path.each_with_index do |pos, idx|
-        add_word_index(pos, idx + 1)
-      end
+      # @word_path.each_with_index do |pos, idx|
+      #   add_word_index(pos, idx + 1)
+      # end
     end
 
     def toggle_select(position)
@@ -168,7 +130,7 @@ module WordThing
       point = gpoint.to_point
       background_image(cell).draw(point.x, point.y, 1)
 
-      return if cell.empty?
+      # return if cell.empty?
 
       letter    = cell.letter
       font      = @game.fonts[:letter]
@@ -178,10 +140,10 @@ module WordThing
       font.draw(letter, ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
     end
 
-    def add_word_index(gpoint, widx)
-      ltr_pos = gpoint.to_point.offset(6, 4)
-      @game.fonts[:small].draw(widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE)
-    end
+    # def add_word_index(gpoint, widx)
+    #   ltr_pos = gpoint.to_point.offset(6, 4)
+    #   @game.fonts[:small].draw(widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE)
+    # end
 
     def background_image(cell)
       cell.selected? ? @game.images[:selected] : @game.images[:letter]
