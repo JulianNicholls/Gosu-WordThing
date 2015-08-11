@@ -10,7 +10,7 @@ module WordThing
 
     attr_reader :words, :word, :columns, :rows
 
-    LENGTHS = [9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3]
+    LENGTHS = [11, 10, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4]
 
     def initialize(game, columns = COLUMNS, rows = ROWS)
       @game     = game
@@ -129,8 +129,6 @@ module WordThing
     def render(gpoint, cell)
       point = gpoint.to_point
       background_image(cell).draw(point.x, point.y, 1)
-
-      # return if cell.empty?
 
       letter    = cell.letter
       font      = @game.fonts[:letter]
