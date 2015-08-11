@@ -17,7 +17,7 @@ module WordThing
         inserted = ''
 
         loop do
-          inserted = select_word(len)
+          inserted = @list.random_word(len)
           break if insert_word(inserted)
         end
 
@@ -25,17 +25,6 @@ module WordThing
       end
 
       private
-
-      def select_word(len)
-        word = ''
-
-        while word.empty?
-          words = @list.words(('A'.ord + rand(26)).chr, len)
-          word  = words[rand words.size].dup unless words.empty?
-        end
-
-        word
-      end
 
       def insert_word(word)
         pos     = random_start_position
