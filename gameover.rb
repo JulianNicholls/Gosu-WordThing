@@ -10,14 +10,29 @@ module WordThing
     P_SIZE    = Size.new(WIDTH - 60, HEIGHT - 60)
 
     def draw
-      @window.draw_rectangle(P_ORIGIN, P_SIZE, 10, Gosu::Color::WHITE)
+      draw_background
+      draw_title
+      draw_score
+      draw_instruction_keys
+    end
 
+    private
+
+    def draw_background
+      @window.draw_rectangle(P_ORIGIN, P_SIZE, 10, Gosu::Color::WHITE)
+    end
+
+    def draw_title
       say('GAME OVER', @fonts[:header],
           :center, P_ORIGIN.y + P_SIZE.height / 6, BLUE)
+    end
 
+    def draw_score
       say("SCORE: #{score_with_commas}", @fonts[:info],
           :center, P_ORIGIN.y + P_SIZE.height * 2 / 5, RED)
+    end
 
+    def draw_instruction_keys
       say('Press R to Restart', @fonts[:info],
           :center, P_ORIGIN.y + P_SIZE.height * 3 / 5, BLUE)
 

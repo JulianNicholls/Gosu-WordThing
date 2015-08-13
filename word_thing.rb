@@ -167,7 +167,7 @@ module WordThing
         @prev_left = time_left
       end
 
-      text  = format('Time  %d:%02d', time_left / 60, time_left % 60)
+      text  = format('Time %d:%02d', time_left / 60, time_left % 60)
       size  = font.measure(text)
       left  = WIDTH - (GAME_BORDER * 4) - size.width
 

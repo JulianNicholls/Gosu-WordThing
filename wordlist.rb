@@ -42,7 +42,9 @@ module WordThing
     # Show the number of words in each letter section of the hash.
 
     def debug
-      @words.each_key { |ltr| printf "%c: %5d\n", ltr.upcase, @words[ltr].length }
+      @words.each_key do |ltr|
+        printf "%c: %5d\n", ltr.upcase, @words[ltr].length
+      end
     end
 
     private
