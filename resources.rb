@@ -22,17 +22,17 @@ module WordThing
 
     def images
       {
-        background: Gosu::Image.new(@window, 'media/background.png', true),
-        letter:     Gosu::Image.new(@window, 'media/letter-bg.png', true),
-        selected:   Gosu::Image.new(@window, 'media/letter-sel-bg.png', true)
+        background: Gosu::Image.new('media/background.png'),
+        letter:     Gosu::Image.new('media/letter-bg.png'),
+        selected:   Gosu::Image.new('media/letter-sel-bg.png')
       }
     end
 
     def sounds
       {
-        ok:   Gosu::Sample.new(@window, 'media/ok.wav'),
-        uhuh: Gosu::Sample.new(@window, 'media/uhuh.wav'),
-        blip: Gosu::Sample.new(@window, 'media/blip.wav')
+        ok:   Gosu::Sample.new('media/ok.wav'),
+        uhuh: Gosu::Sample.new('media/uhuh.wav'),
+        blip: Gosu::Sample.new('media/blip.wav')
       }
     end
   end
