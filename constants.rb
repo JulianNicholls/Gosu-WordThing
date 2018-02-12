@@ -4,7 +4,7 @@ module WordThing
     include GosuEnhanced
 
     GAME_BORDER     = 5
-    GRID_BLOCKS     = 10    # Grid space is 10 tiles wide and high
+    GRID_BLOCKS     = 10 # Grid space is 10 tiles wide and high
     COLUMNS         = 9
     ROWS            = 9
     TILE_SIZE       = 50
@@ -13,7 +13,7 @@ module WordThing
     WIDTH           = 795 # BORDER*3 + BLOCKS * TILE_SIZE + WORDLIST_SIZE.width
     HEIGHT          = 655 # BORDER*3 + BLOCKS * TILE_SIZE + HEADER_HEIGHT
 
-    WORDLIST_SIZE   = Size.new(180, 600)    # GRID_BLOCKS * TILE_SIZE
+    WORDLIST_SIZE   = Size.new(180, 600) # GRID_BLOCKS * TILE_SIZE
 
     WORDLIST_POS    = Point.new(WIDTH - GAME_BORDER - WORDLIST_SIZE.width,
                                 GAME_BORDER * 2 + HEADER_HEIGHT)
@@ -33,7 +33,7 @@ module WordThing
     SCORES          = { b: 3, c: 3, d: 2, f: 4,
                         g: 2, h: 4, j: 8, k: 5,
                         m: 3, p: 3, q: 10, v: 4,
-                        w: 4, x: 8, y: 4, z: 10 }
+                        w: 4, x: 8, y: 4, z: 10 }.freeze
 
     TIME_LIMIT      = 5 * 60
   end

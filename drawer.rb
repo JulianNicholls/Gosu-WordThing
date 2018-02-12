@@ -39,7 +39,7 @@ module WordThing
     private
 
     def total_score(pos, font)
-      return if @game.total_score == 0
+      return if @game.total_score.zero?
 
       pos.move_by!(0, font.height / 6)
       font.draw('Total', pos.x, pos.y, 1, 1, 1, TOTAL_COLOUR)
@@ -47,7 +47,7 @@ module WordThing
     end
 
     def render_score(score, top, font, colour)
-      return if score == 0
+      return if score.zero?
 
       score = score.to_s
       left  = WORDLIST_POS.x + (WORDLIST_SIZE.width - 10) -

@@ -28,12 +28,12 @@ module WordThing
       Gosu::KbReturn  =>  -> { add_word_to_found_list },
 
       Gosu::MsLeft    =>  -> { @position = Point.new(mouse_x, mouse_y) }
-    }
+    }.freeze
 
     def initialize(debug)
       super(WIDTH, HEIGHT, false, 100)
 
-      @debug  = debug
+      @debug = debug
 
       self.caption = caption
 
@@ -54,7 +54,7 @@ module WordThing
       caption
     end
 
-    def needs_cursor?   # Enable the mouse cursor
+    def needs_cursor? # Enable the mouse cursor
       true
     end
 
@@ -108,7 +108,7 @@ module WordThing
     end
 
     def total_score
-      @words.reduce(0) { |a, e| a + e.score }
+      @words.reduce(0) { |acc, elem| acc + elem.score }
     end
 
     def add_word_to_found_list
@@ -119,10 +119,10 @@ module WordThing
 
       found = @words.select { |w| w.word == word }
 
-      if found.size > 0
-        found[0].score = word_score(word)
-      else
+      if found.empty?
         @words << Word.new(word, word_score(word) + 3 * word.size)
+      else
+        found[0].score = word_score(word)
       end
     end
 
@@ -151,7 +151,8 @@ module WordThing
       text  = 'ENTER'
       size  = font.measure(text).inflate(10, 10)
       pos   = WORDLIST_POS.offset(WORDLIST_SIZE).offset(
-        -(size.width + 5), -(size.height + 5))
+        -(size.width + 5), -(size.height + 5)
+      )
 
       @enter = Button.new(self, Region.new(pos, size), text) do
         @window.add_word_to_found_list

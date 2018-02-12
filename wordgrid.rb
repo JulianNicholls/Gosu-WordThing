@@ -10,7 +10,7 @@ module WordThing
 
     attr_reader :words, :word, :columns, :rows
 
-    LENGTHS = [11, 10, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4]
+    LENGTHS = [11, 10, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4].freeze
 
     def initialize(game, columns = COLUMNS, rows = ROWS)
       @game     = game
@@ -18,7 +18,8 @@ module WordThing
       @rows     = rows
       @region   = Region.new(
         GRID_ORIGIN,
-        Size.new(@columns * TILE_SIZE, @rows * TILE_SIZE))
+        Size.new(@columns * TILE_SIZE, @rows * TILE_SIZE)
+      )
 
       initialize_grid
 
@@ -30,23 +31,19 @@ module WordThing
       @grid.each_with_index do |col, c|
         col.each_with_index { |cell, r| render(GPoint.new(c, r), cell) }
       end
-
-      # @word_path.each_with_index do |pos, idx|
-      #   add_word_index(pos, idx + 1)
-      # end
     end
 
     def toggle_select(position)
       return false unless @region.contains?(position)
 
       process_selection(GPoint.from_point(position))
-      true    # Handled position
+      true # Handled position
     end
 
     def reset_word
       @word = ''
 
-      cell_at(@word_path.pop).toggle_selected while @word_path.size > 0
+      cell_at(@word_path.pop).toggle_selected until @word_path.empty?
     end
 
     def neighbours(gpos)
@@ -54,7 +51,7 @@ module WordThing
 
       (-1..1).each do |xd|
         (-1..1).each do |yd|
-          next if xd == 0 && yd == 0
+          next if xd.zero? && yd.zero?
 
           pos = gpos.offset(xd, yd)
           neighs << pos if in_grid? pos
@@ -104,7 +101,7 @@ module WordThing
     end
 
     def valid_next(gpoint)
-      @word.size == 0 ||
+      @word.empty? ||
         (!@word_path.include?(gpoint) &&
         neighbours(@word_path[-1]).include?(gpoint))
     end
@@ -137,11 +134,6 @@ module WordThing
 
       font.draw(letter, ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
     end
-
-    # def add_word_index(gpoint, widx)
-    #   ltr_pos = gpoint.to_point.offset(6, 4)
-    #   @game.fonts[:small].draw(widx.to_s, ltr_pos.x, ltr_pos.y, 2, 1, 1, BLUE)
-    # end
 
     def background_image(cell)
       cell.selected? ? @game.images[:selected] : @game.images[:letter]

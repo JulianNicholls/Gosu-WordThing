@@ -39,7 +39,7 @@ module WordThing
             neighs = @grid.neighbours(pos) - poss
           end
 
-          return false if neighs.size == 0
+          return false if neighs.empty?
           pos = neighs.pop
         end
 
