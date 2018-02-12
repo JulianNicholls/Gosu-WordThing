@@ -69,7 +69,7 @@ class WordsStatistics
   end
 end
 
-filename = 'wtwords.txt'
+filename = '../wtwords.txt'
 
 puts 'Loading...'
 stats = WordsStatistics.new(filename)
