@@ -57,7 +57,7 @@ class WordsStatistics
   end
 
   def type_counts(keys)
-    total = keys.reduce(0) { |a, e| a + @counts[e] }
+    total = keys.reduce(0) { |acc, elem| acc + @counts[elem] }
 
     puts "Total: #{total}"
 

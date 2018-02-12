@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 
-lib = File.expand_path('../..', __FILE__)   # Seems wrong to me
+lib = File.expand_path('../..', __FILE__) # Seems wrong to me
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'gosu_enhanced'
@@ -11,7 +11,7 @@ require 'constants'
 class ConstantViewer
   def initialize
     @wc = WordThing::Constants
-    @values, @objects = @wc.constants.partition { |c| const(c).is_a? Fixnum }
+    @values, @objects = @wc.constants.partition { |c| const(c).is_a? Integer }
   end
 
   def show_values

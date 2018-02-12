@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 
-lib = File.expand_path('../..', __FILE__)   # Seems wrong to me
+lib = File.expand_path('../..', __FILE__) # Seems wrong to me
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'gosu_enhanced'
@@ -14,13 +14,13 @@ module WordThing
     include Constants
 
     KEY_FUNCS = {
-      Gosu::KbEscape =>  -> { close }
-    }
+      Gosu::KbEscape => -> { close }
+    }.freeze
 
     def initialize
       super(WIDTH, HEIGHT, false, 200)
 
-      @fonts  = ResourceLoader.new(self).fonts
+      @fonts = ResourceLoader.new(self).fonts
 
       arrange_fonts
 
