@@ -172,7 +172,7 @@ module WordThing
       size  = font.measure(text)
       left  = WIDTH - (GAME_BORDER * 4) - size.width
 
-      font.draw(text, left, GAME_BORDER + 7, 4, 1, 1, colour(time_left))
+      font.draw_text(text, left, GAME_BORDER + 7, 4, 1, 1, colour(time_left))
     end
 
     def word_score(word)

@@ -69,7 +69,7 @@ module WordThing
       size = font.measure(text)
       text = format('%-10s %3d x %2d (%.1f)',
                     name, size.width, size.height, size.width / text.size)
-      font.draw(text, 20, top, 1, 1, 1, Gosu::Color::WHITE)
+      font.draw_text(text, 20, top, 1, 1, 1, Gosu::Color::WHITE)
 
       size
     end

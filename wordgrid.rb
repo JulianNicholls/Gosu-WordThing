@@ -132,7 +132,7 @@ module WordThing
       ltr_ctr   = font.centred_in(letter, Size.new(TILE_SIZE, TILE_SIZE))
       ltr_point = point.offset(ltr_ctr)
 
-      font.draw(letter, ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
+      font.draw_text(letter, ltr_point.x, ltr_point.y, 2, 1, 1, BLUE)
     end
 
     def background_image(cell)

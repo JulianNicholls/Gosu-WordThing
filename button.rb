@@ -17,7 +17,7 @@ module WordThing
 
       font = @window.fonts[:button]
       pos  = @region.position.offset(font.centred_in(@caption, @region.size))
-      font.draw(@caption, pos.x, pos.y, 2, 1, 1, BUTTON_TEXT)
+      font_text.draw_text(@caption, pos.x, pos.y, 2, 1, 1, BUTTON_TEXT)
     end
 
     def press(pos)
