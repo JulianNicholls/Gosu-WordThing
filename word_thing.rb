@@ -11,9 +11,10 @@ require './button'
 require './pos_handler'
 require './drawer'
 
+# Word thing module
 module WordThing
-  class Word < Struct.new( :word, :score )
-  end
+  # Word storage
+  Word = Struct.new(:word, :score)
 
   # Word game thing
   class Game < Gosu::Window
@@ -24,23 +25,21 @@ module WordThing
     KEY_FUNCS = {
       Gosu::KbEscape  =>  -> { handle_escape },
       Gosu::KbR       =>  -> { reset if @game_over },
-      Gosu::KbReturn  =>  -> { add_word },
+      Gosu::KbReturn  =>  -> { add_word_to_found_list },
 
-      Gosu::MsLeft    =>  -> { @position = Point.new( mouse_x, mouse_y ) }
-    }
+      Gosu::MsLeft    =>  -> { @position = Point.new(mouse_x, mouse_y) }
+    }.freeze
 
-    def initialize( debug )
-      super( WIDTH, HEIGHT, false, 100 )
+    def initialize(debug)
+      super(WIDTH, HEIGHT, false, 100)
 
-      @debug  = debug
+      @debug = debug
 
       self.caption = caption
 
-      @fonts  = ResourceLoader.fonts( self )
-      @images = ResourceLoader.images( self )
-      @sounds = ResourceLoader.sounds( self )
+      load_resources
 
-      @drawer = Drawer.new( self )
+      @drawer = Drawer.new(self)
 
       @list   = WordList.new
 
@@ -55,19 +54,19 @@ module WordThing
       caption
     end
 
-    def needs_cursor?   # Enable the mouse cursor
+    def needs_cursor? # Enable the mouse cursor
       true
     end
 
     def reset
-      @grid       = WordGrid.new( self )
+      @grid       = WordGrid.new(self)
       @game_over  = false
       @position   = nil
       @moves      = 0
       @elapsed    = Time.now
       @end        = @elapsed + TIME_LIMIT
       @score      = 0
-      @words      = @grid.words.map { |w| Word.new( w, 0 ) }
+      @words      = @grid.words.map { |w| Word.new(w, 0) }
 
       set_position_handlers
     end
@@ -92,46 +91,50 @@ module WordThing
     end
 
     def draw
-      draw_background
+      @drawer.background
 
       @grid.draw
-      @drawer.words( @words )
-      @drawer.current( @grid.word ) unless @grid.word.empty?
+      @drawer.words(@words)
+      @drawer.current(@grid.word) unless @grid.word.empty?
       draw_elapsed
 
       @enter.draw
 
-      GameOverWindow.new( self ).draw if @game_over
+      GameOverWindow.new(self).draw if @game_over
     end
 
-    def button_down( btn_id )
-      instance_exec( &KEY_FUNCS[btn_id] ) if KEY_FUNCS.key? btn_id
+    def button_down(btn_id)
+      instance_exec(&KEY_FUNCS[btn_id]) if KEY_FUNCS.key? btn_id
     end
 
     def total_score
-      @words.reduce( 0 ) { |a, e| a + e.score }
+      @words.reduce(0) { |acc, elem| acc + elem.score }
     end
 
-    def add_word
+    def add_word_to_found_list
       word = @grid.word
+      return @sounds[:uhuh].play unless @list.include? word
 
-      @words.each do |w|
-        if w.word == word
-          w.score = word_score( word )
-          ok_word
-          return
-        end
-      end
+      ok_word
 
-      if @list.include? word
-        @words << Word.new( word, word_score( word ) + 3 * word.size )
-        ok_word
+      found = @words.select { |w| w.word == word }
+
+      if found.empty?
+        @words << Word.new(word, word_score(word) + 3 * word.size)
       else
-        @sounds[:uhuh].play
+        found[0].score = word_score(word)
       end
     end
 
     private
+
+    def load_resources
+      loader = ResourceLoader.new(self)
+
+      @fonts  = loader.fonts
+      @images = loader.images
+      @sounds = loader.sounds
+    end
 
     def handle_escape
       @grid.reset_word
@@ -146,52 +149,47 @@ module WordThing
     def add_enter_button
       font  = @fonts[:word]
       text  = 'ENTER'
-      size  = font.measure( text ).inflate( 10, 10 )
-      pos   = WORDLIST_POS.offset( WORDLIST_SIZE ).offset(
-                -(size.width + 5), -(size.height + 5) )
-      @enter = Button.new( self, pos, size, text, BUTTON_TEXT, BUTTON_BG ) do
-        @window.add_word
-      end
-    end
+      size  = font.measure(text).inflate(10, 10)
+      pos   = WORDLIST_POS.offset(WORDLIST_SIZE).offset(
+        -(size.width + 5), -(size.height + 5)
+      )
 
-    def draw_background
-      @images[:background].draw( 0, 0, 0 )
+      @enter = Button.new(self, Region.new(pos, size), text) do
+        @window.add_word_to_found_list
+      end
     end
 
     def draw_elapsed
-      font    = @fonts[:time]
-      left    = (@end - @elapsed).round
-      colour  = BLUE
+      font      = @fonts[:time]
+      time_left = (@end - @elapsed).round
 
-      if left <= 10
-        if @prev_left != left
-          @sounds[:blip].play
-          @prev_left = left
-        end
-
-        colour = RED
+      if time_left <= 10 && @prev_left != time_left
+        @sounds[:blip].play
+        @prev_left = time_left
       end
 
-      text  = format( 'Time  %d:%02d', left / 60, left % 60 )
-      size  = font.measure( text )
+      text  = format('Time %d:%02d', time_left / 60, time_left % 60)
+      size  = font.measure(text)
       left  = WIDTH - (GAME_BORDER * 4) - size.width
 
-      font.draw( text, left, GAME_BORDER + 7, 4, 1, 1, colour )
+      font.draw(text, left, GAME_BORDER + 7, 4, 1, 1, colour(time_left))
     end
 
-    def word_score( word )
-      total = word.each_char.reduce( 0 ) do |tot, ltr|
-        ltr = ltr.downcase.to_sym
-
-        tot + (SCORES.key?( ltr ) ? SCORES[ltr] : 1)
+    def word_score(word)
+      total = word.each_char.reduce(0) do |tot, ltr|
+        tot + SCORES.fetch(ltr.downcase.to_sym, 1)
       end
 
       total * [word.size - 4, 1].max
+    end
+
+    def colour(time_left)
+      time_left <= 10 ? RED : BLUE
     end
   end
 end
 
 debug = ARGV.include? '--debug'
 
-window = WordThing::Game.new( debug )
+window = WordThing::Game.new(debug)
 window.show

@@ -1,8 +1,8 @@
 # Collect the statistics on a set of words
 class WordsStatistics
-  def initialize( filename )
+  def initialize(filename)
     @words = []
-    File.foreach( filename ) { |line| @words << line.chomp }
+    File.foreach(filename) { |line| @words << line.chomp }
   end
 
   def raw_by_alpha
@@ -11,7 +11,7 @@ class WordsStatistics
     @counts.keys.sort.each { |k| puts "#{k}: #{@counts[k]}" }
   end
 
-  def raw_by_count( order = :ascending )
+  def raw_by_count(order = :ascending)
     @counts ||= count_letters
 
     counts = @counts.sort_by { |_, v| v }
@@ -23,31 +23,31 @@ class WordsStatistics
   def vowel_counts
     @counts ||= count_letters
 
-    vowels, _ = @counts.keys.partition { |ltr| 'AEIOU'.include? ltr }
+    vowels, _cons = @counts.keys.partition { |ltr| 'AEIOU'.include? ltr }
 
-    type_counts( vowels.sort )
+    type_counts(vowels.sort)
   end
 
   def consonant_counts
     @counts ||= count_letters
 
-    _, consonants = @counts.keys.partition { |ltr| 'AEIOU'.include? ltr }
+    _vows, consonants = @counts.keys.partition { |ltr| 'AEIOU'.include? ltr }
 
-    type_counts( consonants.sort )
+    type_counts(consonants.sort)
   end
 
   def initials
-    counts = Hash.new( 0 )
+    counts = Hash.new(0)
 
     @words.each { |w| counts[w[0]] += 1 }
 
-    type_counts( counts.keys.sort )
+    type_counts(counts.keys.sort)
   end
 
   private
 
   def count_letters
-    counts = Hash.new( 0 )
+    counts = Hash.new(0)
 
     @words.each do |word|
       word.each_char { |ltr| counts[ltr] += 1 }
@@ -56,28 +56,29 @@ class WordsStatistics
     counts
   end
 
-  def type_counts( keys )
-    total = keys.reduce( 0 ) { |a, e| a + @counts[e] }
+  def type_counts(keys)
+    total = keys.reduce(0) { |acc, elem| acc + @counts[elem] }
 
     puts "Total: #{total}"
 
     keys.each do |k|
       count = @counts[k]
-      printf( "%s: %5d - %6.2f%%\n", k, count, ((count * 100.0) / total).round( 2 ) )
+      printf("%s: %5d - %6.2f%%\n",
+             k, count, ((count * 100.0) / total).round(2))
     end
   end
 end
 
-filename = 'wtwords.txt'
+filename = '../wtwords.txt'
 
 puts 'Loading...'
-stats = WordsStatistics.new( filename )
+stats = WordsStatistics.new(filename)
 
 puts "\nRaw Letters Alphabetically..."
 stats.raw_by_alpha
 
 puts "\nRaw Letters by Count..."
-stats.raw_by_count( :descending )
+stats.raw_by_count(:descending)
 
 puts "\nVowel Count..."
 stats.vowel_counts
